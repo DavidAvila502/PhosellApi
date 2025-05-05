@@ -23,19 +23,19 @@ public class RefreshAccessTokenService {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    public String refreshAccesstoken(String token){
+    public String refreshAccesstoken(String refreshToken){
 
-        String userEmail = jwtService.extractUsername(token);
+        String userEmail = jwtService.extractUsername(refreshToken);
 
         CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
 
         // Validate the token
-        if(!jwtService.isTokenValid(token,userDetails)){
+        if(!jwtService.isTokenValid(refreshToken,userDetails)){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
         };
 
         // Find the token in database
-        RefreshToken refreshToken = refreshTokenJpaAdapter.findByToken(token)
+        RefreshToken refreshTokenFound = refreshTokenJpaAdapter.findByToken(refreshToken)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         // Generate new access token
