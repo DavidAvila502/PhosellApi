@@ -90,23 +90,23 @@ public class AuthenticationExceptionHandler {
 
 
     // Generic
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> handleUserGeneric(
-            Exception ex,
-            WebRequest request) {
-
-        String errorId = java.util.UUID.randomUUID().toString();
-        ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        detail.setTitle("Internal Authentication Module Error");
-        detail.setDetail("Unexpected error in Authentication module. Ref: " + errorId);
-        detail.setProperty("timestamp", LocalDateTime.now());
-        detail.setProperty("path", ((ServletWebRequest) request).getRequest().getRequestURI());
-        detail.setProperty("code", "AUTHENTICATION_MODULE_ERROR");
-        detail.setProperty("errorId", errorId);
-
-         log.error("Error [{}] in User module", errorId, ex);
-
-        return new ResponseEntity<>(detail, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ProblemDetail> handleUserGeneric(
+//            Exception ex,
+//            WebRequest request) {
+//
+//        String errorId = java.util.UUID.randomUUID().toString();
+//        ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+//        detail.setTitle("Internal Authentication Module Error");
+//        detail.setDetail("Unexpected error in Authentication module. Ref: " + errorId);
+//        detail.setProperty("timestamp", LocalDateTime.now());
+//        detail.setProperty("path", ((ServletWebRequest) request).getRequest().getRequestURI());
+//        detail.setProperty("code", "AUTHENTICATION_MODULE_ERROR");
+//        detail.setProperty("errorId", errorId);
+//
+//         log.error("Error [{}] in User module", errorId, ex);
+//
+//        return new ResponseEntity<>(detail, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
 }
