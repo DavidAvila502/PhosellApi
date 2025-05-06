@@ -2,7 +2,7 @@ package com.dev.phosell.Authentication.infrastructure.persistence.mappers;
 
 import com.dev.phosell.Authentication.infrastructure.dto.RegisterClientDto;
 import com.dev.phosell.Authentication.infrastructure.dto.RegisterClientResponseDto;
-import com.dev.phosell.users.domain.models.User;
+import com.dev.phosell.User.domain.models.User;
 import org.springframework.stereotype.Component;
 
 @Component

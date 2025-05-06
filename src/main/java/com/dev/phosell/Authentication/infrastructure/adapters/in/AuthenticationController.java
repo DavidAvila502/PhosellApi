@@ -3,7 +3,7 @@ package com.dev.phosell.Authentication.infrastructure.adapters.in;
 import com.dev.phosell.Authentication.Application.services.*;
 import com.dev.phosell.Authentication.infrastructure.dto.*;
 import com.dev.phosell.Authentication.infrastructure.persistence.mappers.AuthUserMapper;
-import com.dev.phosell.users.domain.models.User;
+import com.dev.phosell.User.domain.models.User;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

@@ -1,5 +1,6 @@
 package com.dev.phosell.Authentication.Application.services;
 
+import com.dev.phosell.Authentication.domain.exception.refreshToken.InvalidRefreshTokenException;
 import com.dev.phosell.Authentication.domain.models.CustomUserDetails;
 import com.dev.phosell.Authentication.domain.models.RefreshToken;
 import com.dev.phosell.Authentication.infrastructure.adapters.out.RefreshTokenJpaAdapter;
@@ -43,7 +44,7 @@ public class LogoutService {
 
         // Find the token in database
         RefreshToken foundRefreshToken = refreshTokenJpaAdapter.findByToken(refreshToken)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+                .orElseThrow(InvalidRefreshTokenException::new);
 
         // Delete the token from database
         refreshTokenJpaAdapter.deleteByToken(foundRefreshToken.getToken());

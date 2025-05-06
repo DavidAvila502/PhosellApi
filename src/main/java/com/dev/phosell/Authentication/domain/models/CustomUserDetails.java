@@ -1,7 +1,7 @@
 package com.dev.phosell.Authentication.domain.models;
 
-import com.dev.phosell.users.domain.models.Role;
-import com.dev.phosell.users.domain.models.User;
+import com.dev.phosell.User.domain.models.Role;
+import com.dev.phosell.User.domain.models.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

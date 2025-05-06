@@ -1,6 +1,6 @@
 package com.dev.phosell.Authentication.Application.ports.out;
 
-import com.dev.phosell.users.domain.models.User;
+import com.dev.phosell.User.domain.models.User;
 
 import java.util.Optional;
 

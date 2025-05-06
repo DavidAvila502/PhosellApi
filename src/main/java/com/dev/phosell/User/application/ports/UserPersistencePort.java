@@ -1,7 +1,7 @@
-package com.dev.phosell.users.application.ports;
+package com.dev.phosell.User.application.ports;
 
-import com.dev.phosell.users.domain.models.Role;
-import com.dev.phosell.users.domain.models.User;
+import com.dev.phosell.User.domain.models.Role;
+import com.dev.phosell.User.domain.models.User;
 
 import java.util.List;
 import java.util.Optional;

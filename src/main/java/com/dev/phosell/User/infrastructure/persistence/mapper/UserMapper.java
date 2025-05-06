@@ -1,7 +1,7 @@
-package com.dev.phosell.users.infrastructure.persistence.mapper;
+package com.dev.phosell.User.infrastructure.persistence.mapper;
 
-import com.dev.phosell.users.domain.models.User;
-import com.dev.phosell.users.infrastructure.persistence.jpa.entities.UserEntity;
+import com.dev.phosell.User.domain.models.User;
+import com.dev.phosell.User.infrastructure.persistence.jpa.entities.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -2,7 +2,7 @@ package com.dev.phosell.Authentication.infrastructure.persistence.mappers;
 
 import com.dev.phosell.Authentication.domain.models.RefreshToken;
 import com.dev.phosell.Authentication.infrastructure.persistence.jpa.entities.RefreshTokenEntity;
-import com.dev.phosell.users.infrastructure.persistence.mapper.UserMapper;
+import com.dev.phosell.User.infrastructure.persistence.mapper.UserMapper;
 import org.springframework.stereotype.Component;
 
 @Component

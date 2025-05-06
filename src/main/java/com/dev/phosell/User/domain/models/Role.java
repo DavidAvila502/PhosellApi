@@ -1,4 +1,4 @@
-package com.dev.phosell.users.domain.models;
+package com.dev.phosell.User.domain.models;
 
     public enum Role {
         CLIENT,

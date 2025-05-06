@@ -1,13 +1,13 @@
-package com.dev.phosell.users.infrastructure.adapters.out;
+package com.dev.phosell.User.infrastructure.adapters.out;
 
 import com.dev.phosell.Authentication.Application.ports.out.LoadUserPort;
 import com.dev.phosell.Authentication.Application.ports.out.RegisterUserPort;
-import com.dev.phosell.users.application.ports.UserPersistencePort;
-import com.dev.phosell.users.domain.models.Role;
-import com.dev.phosell.users.domain.models.User;
-import com.dev.phosell.users.infrastructure.persistence.jpa.entities.UserEntity;
-import com.dev.phosell.users.infrastructure.persistence.jpa.repositories.UserJpaRepository;
-import com.dev.phosell.users.infrastructure.persistence.mapper.UserMapper;
+import com.dev.phosell.User.application.ports.UserPersistencePort;
+import com.dev.phosell.User.domain.models.Role;
+import com.dev.phosell.User.domain.models.User;
+import com.dev.phosell.User.infrastructure.persistence.jpa.entities.UserEntity;
+import com.dev.phosell.User.infrastructure.persistence.jpa.repositories.UserJpaRepository;
+import com.dev.phosell.User.infrastructure.persistence.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

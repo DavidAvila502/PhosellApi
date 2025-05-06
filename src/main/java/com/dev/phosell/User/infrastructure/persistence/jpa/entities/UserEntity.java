@@ -1,6 +1,6 @@
-package com.dev.phosell.users.infrastructure.persistence.jpa.entities;
+package com.dev.phosell.User.infrastructure.persistence.jpa.entities;
 
-import com.dev.phosell.users.domain.models.Role;
+import com.dev.phosell.User.domain.models.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

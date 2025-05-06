@@ -1,7 +1,7 @@
 package com.dev.phosell.Authentication.infrastructure.persistence.jpa.entities;
 
 
-import com.dev.phosell.users.infrastructure.persistence.jpa.entities.UserEntity;
+import com.dev.phosell.User.infrastructure.persistence.jpa.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

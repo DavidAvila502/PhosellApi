@@ -2,7 +2,7 @@ package com.dev.phosell.Authentication.Application.services;
 
 import com.dev.phosell.Authentication.domain.models.RefreshToken;
 import com.dev.phosell.Authentication.infrastructure.adapters.out.RefreshTokenJpaAdapter;
-import com.dev.phosell.users.domain.models.User;
+import com.dev.phosell.User.domain.models.User;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;

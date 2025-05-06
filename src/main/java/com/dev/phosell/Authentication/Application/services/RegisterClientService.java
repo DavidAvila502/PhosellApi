@@ -2,9 +2,9 @@ package com.dev.phosell.Authentication.Application.services;
 
 import com.dev.phosell.Authentication.Application.ports.out.LoadUserPort;
 import com.dev.phosell.Authentication.Application.ports.out.RegisterUserPort;
-import com.dev.phosell.users.domain.models.Role;
-import com.dev.phosell.users.domain.models.User;
-import jakarta.validation.ValidationException;
+import com.dev.phosell.User.domain.exception.UserExistsException;
+import com.dev.phosell.User.domain.models.Role;
+import com.dev.phosell.User.domain.models.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class RegisterClientService {
         Optional<User> foundUser = loadUserPort.findByEmail(user.getEmail());
 
         if(foundUser.isPresent()){
-            throw new ValidationException("The user already does exist.");
+            throw new UserExistsException(foundUser.get().getEmail());
         }
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());

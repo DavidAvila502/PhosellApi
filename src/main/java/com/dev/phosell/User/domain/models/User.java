@@ -1,4 +1,4 @@
-package com.dev.phosell.users.domain.models;
+package com.dev.phosell.User.domain.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

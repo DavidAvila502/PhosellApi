@@ -1,4 +1,4 @@
-package com.dev.phosell.users.infrastructure.adapters.in;
+package com.dev.phosell.User.infrastructure.adapters.in;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

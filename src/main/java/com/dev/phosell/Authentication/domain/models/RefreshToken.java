@@ -1,6 +1,6 @@
 package com.dev.phosell.Authentication.domain.models;
 
-import com.dev.phosell.users.domain.models.User;
+import com.dev.phosell.User.domain.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
