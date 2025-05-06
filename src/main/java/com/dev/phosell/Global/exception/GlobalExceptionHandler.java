@@ -1,4 +1,4 @@
-package com.dev.phosell.Global.exception;
+package com.dev.phosell.global.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
