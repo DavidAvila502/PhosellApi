@@ -4,6 +4,7 @@ import com.dev.phosell.Authentication.domain.models.CustomUserDetails;
 import com.dev.phosell.Authentication.domain.models.RefreshToken;
 import com.dev.phosell.Authentication.infrastructure.adapters.out.RefreshTokenJpaAdapter;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -11,23 +12,23 @@ import org.springframework.web.server.ResponseStatusException;
 public class RefreshAccessTokenService {
     private final RefreshTokenJpaAdapter refreshTokenJpaAdapter;
     private final JwtService jwtService;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserDetailsService userDetailsService;
 
     public RefreshAccessTokenService(
             RefreshTokenJpaAdapter refreshTokenJpaAdapter,
             JwtService jwtService,
-            CustomUserDetailsService customUserDetailsService
+            UserDetailsService customUserDetailsService
     ){
         this.refreshTokenJpaAdapter = refreshTokenJpaAdapter;
         this.jwtService = jwtService;
-        this.customUserDetailsService = customUserDetailsService;
+        this.userDetailsService = customUserDetailsService;
     }
 
     public String refreshAccesstoken(String refreshToken){
 
         String userEmail = jwtService.extractUsername(refreshToken);
 
-        CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+        CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userEmail);
 
         // Validate the token
         if(!jwtService.isTokenValid(refreshToken,userDetails)){

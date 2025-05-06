@@ -43,6 +43,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/auth/refresh","/auth/logout")
                         .authenticated()
 
+                        //client route
+                        .requestMatchers(HttpMethod.GET, "/client/me")
+                        .authenticated()
+
                         // all other routes
                         .anyRequest()
                         .authenticated())

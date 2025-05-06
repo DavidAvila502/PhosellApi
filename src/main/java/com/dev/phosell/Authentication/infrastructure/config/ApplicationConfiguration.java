@@ -1,6 +1,5 @@
 package com.dev.phosell.Authentication.infrastructure.config;
 
-import com.dev.phosell.Authentication.Application.ports.out.LoadUserPort;
 import com.dev.phosell.Authentication.Application.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,8 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
@@ -23,7 +20,7 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    UserDetailsService userDetailsService() {
+    org.springframework.security.core.userdetails.UserDetailsService userDetailsService() {
         return username -> customUserDetailsService.loadUserByUsername(username);
     }
 

@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,18 +16,18 @@ import org.springframework.web.server.ResponseStatusException;
 public class LogoutService {
     private final RefreshTokenJpaAdapter refreshTokenJpaAdapter;
     private final JwtService jwtService;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserDetailsService userDetailsService;
     private  final RefreshTokenCookieService refreshTokenCookieService;
 
     public  LogoutService(
             RefreshTokenJpaAdapter refreshTokenJpaAdapter,
             JwtService jwtService,
-            CustomUserDetailsService customUserDetailsService,
+            UserDetailsService customUserDetailsService,
             RefreshTokenCookieService refreshTokenCookieService
     ){
         this.refreshTokenJpaAdapter = refreshTokenJpaAdapter;
         this.jwtService = jwtService;
-        this.customUserDetailsService = customUserDetailsService;
+        this.userDetailsService = customUserDetailsService;
         this.refreshTokenCookieService = refreshTokenCookieService;
     }
 
@@ -35,7 +36,7 @@ public class LogoutService {
 
         String userEmail = jwtService.extractUsername(refreshToken);
 
-        CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+        CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(userEmail);
 
         // Validate the token
         if(!jwtService.isTokenValid(refreshToken,userDetails)){
