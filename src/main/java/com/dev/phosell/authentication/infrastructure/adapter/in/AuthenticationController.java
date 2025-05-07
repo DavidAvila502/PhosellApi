@@ -8,10 +8,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.net.URI;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthenticationController {
     private final LoginService loginService;
     private final AuthUserMapper authUserMapper;
@@ -45,7 +47,7 @@ public class AuthenticationController {
         return  ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/register/client")
+    @PostMapping("/register")
     public ResponseEntity<RegisterClientResponseDto> registerClient(@RequestBody @Valid RegisterClientDto client)
     {
         User user = authUserMapper.toUser(client);
@@ -54,7 +56,13 @@ public class AuthenticationController {
 
         RegisterClientResponseDto registerClientResponse = authUserMapper.toRegisterClientResponse(registeredUser);
 
-        return ResponseEntity.ok(registerClientResponse);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(registeredUser.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(registerClientResponse);
     }
 
 

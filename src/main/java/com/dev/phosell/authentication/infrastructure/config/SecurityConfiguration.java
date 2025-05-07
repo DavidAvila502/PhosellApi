@@ -37,14 +37,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
 
                         // auth route
-                        .requestMatchers(HttpMethod.POST,"/auth/login", "/auth/register/client")
+                        .requestMatchers(HttpMethod.POST,"/api/v1/auth/login", "/api/v1/auth/register")
                         .permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/auth/refresh","/auth/logout")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh","/api/v1/auth/logout")
                         .authenticated()
 
                         //client route
-                        .requestMatchers(HttpMethod.GET, "/client/me")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/client/me")
                         .authenticated()
 
                         // all other routes
