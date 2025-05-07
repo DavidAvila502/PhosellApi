@@ -1,5 +1,6 @@
 package com.dev.phosell.authentication.infrastructure.config;
 
+import com.dev.phosell.user.domain.model.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -44,8 +45,7 @@ public class SecurityConfiguration {
                         .authenticated()
 
                         //client route
-                        .requestMatchers(HttpMethod.GET, "/api/v1/client/me")
-                        .authenticated()
+                        .requestMatchers( "/api/v1/clients/**").hasRole(Role.CLIENT.toString())
 
                         // all other routes
                         .anyRequest()
