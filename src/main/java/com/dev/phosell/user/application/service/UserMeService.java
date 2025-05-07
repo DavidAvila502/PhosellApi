@@ -1,4 +1,4 @@
-package com.dev.phosell.user.application.service.client;
+package com.dev.phosell.user.application.service;
 
 import com.dev.phosell.authentication.domain.model.CustomUserDetails;
 import com.dev.phosell.user.domain.model.User;
@@ -7,9 +7,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ClientMeService {
+public class UserMeService {
 
-    public ClientMeService(){
+    public UserMeService(){
     }
 
     public User me(){

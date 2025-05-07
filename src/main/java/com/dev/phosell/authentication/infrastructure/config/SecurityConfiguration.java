@@ -47,6 +47,9 @@ public class SecurityConfiguration {
                         //client route
                         .requestMatchers( "/api/v1/clients/**").hasRole(Role.CLIENT.toString())
 
+                        //photographer route
+                        .requestMatchers( "/api/v1/photographers/**").hasRole(Role.PHOTOGRAPHER.toString())
+
                         // all other routes
                         .anyRequest()
                         .authenticated())
