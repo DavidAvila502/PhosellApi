@@ -5,11 +5,11 @@ import com.dev.phosell.authentication.domain.model.RefreshToken;
 import com.dev.phosell.authentication.infrastructure.persistence.jpa.entity.RefreshTokenEntity;
 import com.dev.phosell.authentication.infrastructure.persistence.mapper.RefreshTokenMapper;
 import com.dev.phosell.authentication.infrastructure.persistence.jpa.repository.RefreshTokenJpaRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Component
+@Repository
 public class RefreshTokenJpaAdapter implements RefreshTokenPersistencePort {
 
     private final RefreshTokenJpaRepository refreshTokenJpaRepository;
