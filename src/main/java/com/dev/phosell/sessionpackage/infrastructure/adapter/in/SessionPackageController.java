@@ -23,7 +23,7 @@ public class SessionPackageController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN','PHOTOGRAPHER','CLIENT')")
+    @PreAuthorize("hasAnyRole('ADMIN','PHOTOGRAPHER','CLIENT')")
     public List<SessionPackage> findAll(){
         return  findAllSessionsPackagesService.findAll();
     }
