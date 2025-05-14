@@ -1,7 +1,8 @@
 package com.dev.phosell.user.infrastructure.adapter.out;
 
-import com.dev.phosell.authentication.application.port.out.LoadUserPort;
-import com.dev.phosell.authentication.application.port.out.RegisterUserPort;
+import com.dev.phosell.user.application.port.out.FindPhotographersByIsInServicePort;
+import com.dev.phosell.user.application.port.out.LoadUserPort;
+import com.dev.phosell.user.application.port.out.RegisterUserPort;
 import com.dev.phosell.user.application.port.out.UserPersistencePort;
 import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;
@@ -16,7 +17,9 @@ import java.util.Optional;
 
 
 @Repository
-public class UserJpaAdapter implements UserPersistencePort , LoadUserPort, RegisterUserPort {
+public class UserJpaAdapter implements
+        UserPersistencePort , LoadUserPort,
+        RegisterUserPort, FindPhotographersByIsInServicePort {
 
     private final UserJpaRepository userJpaRepository;
     private final UserMapper userMapper;
@@ -46,5 +49,11 @@ public class UserJpaAdapter implements UserPersistencePort , LoadUserPort, Regis
     @Override
     public List<User> findByRole(Role role) {
         return userJpaRepository.findByRole(role).stream().map(userMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<User> findPhotographersByIsInService(Boolean isInService) {
+        return userJpaRepository.findPhotographersByIsInService(isInService)
+                .stream().map(u -> userMapper.toDomain(u)).toList();
     }
 }

@@ -1,22 +1,18 @@
 package com.dev.phosell.session.application.service;
+import com.dev.phosell.session.application.port.out.SessionPersistencePort;
 import com.dev.phosell.session.domain.model.Session;
-import com.dev.phosell.session.infrastructure.adapter.out.SessionJpaAdapter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class FindAllSessionsService {
-    private  final SessionJpaAdapter sessionJpaAdapter;
+    private  final SessionPersistencePort sessionPersistencePort;
 
-    public FindAllSessionsService(SessionJpaAdapter sessionJpaAdapter){
-        this.sessionJpaAdapter = sessionJpaAdapter;
+    public FindAllSessionsService(SessionPersistencePort sessionPersistencePort){
+        this.sessionPersistencePort = sessionPersistencePort;
     }
-
     public List<Session> findAll(){
-        return sessionJpaAdapter.findAll();
+        return sessionPersistencePort.findAll();
     }
-
-
-
 }

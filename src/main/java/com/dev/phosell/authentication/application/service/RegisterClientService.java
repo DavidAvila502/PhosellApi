@@ -1,7 +1,7 @@
 package com.dev.phosell.authentication.application.service;
 
-import com.dev.phosell.authentication.application.port.out.LoadUserPort;
-import com.dev.phosell.authentication.application.port.out.RegisterUserPort;
+import com.dev.phosell.user.application.port.out.LoadUserPort;
+import com.dev.phosell.user.application.port.out.RegisterUserPort;
 import com.dev.phosell.user.domain.exception.UserExistsException;
 import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;

@@ -1,9 +1,9 @@
 package com.dev.phosell.authentication.application.service;
 
+import com.dev.phosell.authentication.application.port.out.RefreshTokenPersistencePort;
 import com.dev.phosell.authentication.domain.exception.token.InvalidRefreshTokenException;
 import com.dev.phosell.authentication.domain.model.CustomUserDetails;
 import com.dev.phosell.authentication.domain.model.RefreshToken;
-import com.dev.phosell.authentication.infrastructure.adapter.out.RefreshTokenJpaAdapter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -14,18 +14,18 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class LogoutService {
-    private final RefreshTokenJpaAdapter refreshTokenJpaAdapter;
+    private final RefreshTokenPersistencePort refreshTokenPersistencePort;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private  final RefreshTokenCookieService refreshTokenCookieService;
 
     public  LogoutService(
-            RefreshTokenJpaAdapter refreshTokenJpaAdapter,
+            RefreshTokenPersistencePort refreshTokenPersistencePort,
             JwtService jwtService,
             UserDetailsService customUserDetailsService,
             RefreshTokenCookieService refreshTokenCookieService
     ){
-        this.refreshTokenJpaAdapter = refreshTokenJpaAdapter;
+        this.refreshTokenPersistencePort = refreshTokenPersistencePort;
         this.jwtService = jwtService;
         this.userDetailsService = customUserDetailsService;
         this.refreshTokenCookieService = refreshTokenCookieService;
@@ -44,11 +44,11 @@ public class LogoutService {
         };
 
         // Find the token in database
-        RefreshToken foundRefreshToken = refreshTokenJpaAdapter.findByToken(refreshToken)
+        RefreshToken foundRefreshToken = refreshTokenPersistencePort.findByToken(refreshToken)
                 .orElseThrow(InvalidRefreshTokenException::new);
 
         // Delete the token from database
-        refreshTokenJpaAdapter.deleteByToken(foundRefreshToken.getToken());
+        refreshTokenPersistencePort.deleteByToken(foundRefreshToken.getToken());
 
         // Clean refreshToken from Cookies
         Cookie refreshTokenCookie = refreshTokenCookieService.cleanCookie("/api/auth/refresh");

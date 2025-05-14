@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                         .requestMatchers( "/api/v1/photographers/**").hasRole(Role.PHOTOGRAPHER.toString())
 
                         // session route
-                        .requestMatchers(HttpMethod.GET,"/api/v1/sessions").permitAll()
+                        .requestMatchers("/api/v1/sessions/**").permitAll()
 
                         // all other routes
                         .anyRequest()

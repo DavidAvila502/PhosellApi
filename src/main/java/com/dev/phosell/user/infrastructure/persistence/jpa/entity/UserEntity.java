@@ -56,6 +56,9 @@ public class UserEntity {
     @Column(nullable = false)
     private Role role;
 
+    @Column(name = "is_in_service")
+    private Boolean isInService;
+
     @Column(name = "created_by")
     private UUID createdById;
 

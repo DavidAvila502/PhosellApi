@@ -7,6 +7,7 @@ import com.dev.phosell.session.infrastructure.persistence.jpa.repository.Session
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,5 +57,11 @@ public class SessionJpaAdapter implements SessionPersistencePort {
     public List<Session> findBySessionPackageId(UUID id) {
         return sessionJpaRepository.findBySessionPackageId(id).stream()
                 .map(session -> sessionMapper.toDomain(session)).toList();
+    }
+
+    @Override
+    public List<Session> findByDateAndStatusNotIn(LocalDate date,List<String> statuses) {
+        return sessionJpaRepository.findByDateAndStatusNotIn(date,statuses).stream()
+                .map(s -> sessionMapper.toDomain(s)).toList();
     }
 }

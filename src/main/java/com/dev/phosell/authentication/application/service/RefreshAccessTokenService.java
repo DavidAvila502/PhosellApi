@@ -1,8 +1,8 @@
 package com.dev.phosell.authentication.application.service;
 
+import com.dev.phosell.authentication.application.port.out.RefreshTokenPersistencePort;
 import com.dev.phosell.authentication.domain.model.CustomUserDetails;
 import com.dev.phosell.authentication.domain.model.RefreshToken;
-import com.dev.phosell.authentication.infrastructure.adapter.out.RefreshTokenJpaAdapter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -10,16 +10,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class RefreshAccessTokenService {
-    private final RefreshTokenJpaAdapter refreshTokenJpaAdapter;
+    private final RefreshTokenPersistencePort refreshTokenPersistencePort;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     public RefreshAccessTokenService(
-            RefreshTokenJpaAdapter refreshTokenJpaAdapter,
+            RefreshTokenPersistencePort refreshTokenPersistencePort,
             JwtService jwtService,
             UserDetailsService customUserDetailsService
     ){
-        this.refreshTokenJpaAdapter = refreshTokenJpaAdapter;
+        this.refreshTokenPersistencePort = refreshTokenPersistencePort;
         this.jwtService = jwtService;
         this.userDetailsService = customUserDetailsService;
     }
@@ -36,7 +36,7 @@ public class RefreshAccessTokenService {
         };
 
         // Find the token in database
-        RefreshToken refreshTokenFound = refreshTokenJpaAdapter.findByToken(refreshToken)
+        RefreshToken refreshTokenFound = refreshTokenPersistencePort.findByToken(refreshToken)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 
         // Generate new access token

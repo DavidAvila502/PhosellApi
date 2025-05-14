@@ -1,4 +1,4 @@
-package com.dev.phosell.authentication.application.port.out;
+package com.dev.phosell.user.application.port.out;
 
 import com.dev.phosell.user.domain.model.User;
 

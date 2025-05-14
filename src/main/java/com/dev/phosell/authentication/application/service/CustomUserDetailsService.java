@@ -1,6 +1,6 @@
 package com.dev.phosell.authentication.application.service;
 
-import com.dev.phosell.authentication.application.port.out.LoadUserPort;
+import com.dev.phosell.user.application.port.out.LoadUserPort;
 import com.dev.phosell.authentication.domain.model.CustomUserDetails;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.security.core.userdetails.UserDetailsService;

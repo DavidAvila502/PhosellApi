@@ -1,5 +1,6 @@
 package com.dev.phosell.authentication.application.service;
 
+import com.dev.phosell.authentication.application.port.out.RefreshTokenPersistencePort;
 import com.dev.phosell.authentication.domain.model.RefreshToken;
 import com.dev.phosell.authentication.infrastructure.adapter.out.RefreshTokenJpaAdapter;
 import com.dev.phosell.user.domain.model.User;
@@ -10,14 +11,14 @@ import java.sql.Timestamp;
 @Service
 public class SaveRefreshTokenInDbService {
 
-    private final RefreshTokenJpaAdapter refreshTokenJpaAdapter;
+    private final RefreshTokenPersistencePort refreshTokenPersistencePort;
     private final  JwtService jwtService;
 
     public SaveRefreshTokenInDbService(
-            RefreshTokenJpaAdapter refreshTokenJpaAdapter,
+            RefreshTokenPersistencePort refreshTokenPersistencePort,
             JwtService jwtService
     ){
-        this.refreshTokenJpaAdapter = refreshTokenJpaAdapter;
+        this.refreshTokenPersistencePort = refreshTokenPersistencePort;
         this.jwtService = jwtService;
     }
 
@@ -29,7 +30,7 @@ public class SaveRefreshTokenInDbService {
         newRefreshToken.setUser(user);
         newRefreshToken.setExpiryDate(new Timestamp(System.currentTimeMillis() + jwtService.getRefreshTokenExpiration()));
 
-        refreshTokenJpaAdapter.save(newRefreshToken);
+        refreshTokenPersistencePort.save(newRefreshToken);
 
         return  newRefreshToken;
 

@@ -22,5 +22,6 @@ public class User {
     private String idPhotoFront;
     private String idPhotoBack;
     private Role role;
+    private Boolean isInService;
 
 }
