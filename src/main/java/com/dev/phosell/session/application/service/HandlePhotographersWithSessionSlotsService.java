@@ -1,66 +1,38 @@
 package com.dev.phosell.session.application.service;
 
-import com.dev.phosell.session.application.port.out.SessionPersistencePort;
 import com.dev.phosell.session.domain.model.Session;
-import com.dev.phosell.user.application.port.out.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
-@Getter
+@Data
 @Service
 public class HandlePhotographersWithSessionSlotsService {
 
     @Value("${session.duration}")
     private int sessionDuration;
 
-    private final GenerateSessionSlots generateSessionSlots;
-    private final SessionPersistencePort sessionPersistencePort;
-    private final FindPhotographersByIsInServicePort findPhotographersByIsInServicePort;
-
-    public List<LocalTime> allSlots = new ArrayList<>();
-    public List<Session> busySessions = new ArrayList<>();
-    public List<User> photographersInService = new ArrayList<>();
-    public Map<UUID, Set<LocalTime>> photographersBlockedSlots = new HashMap<>();
-    public List<LocalTime> availableSlots = new ArrayList<>();
-
     // constructor
-    public HandlePhotographersWithSessionSlotsService(
-            GenerateSessionSlots generateSessionSlots,
-            SessionPersistencePort sessionPersistencePort,
-            FindPhotographersByIsInServicePort findPhotographersByIsInServicePort
-    ){
-        this.generateSessionSlots = generateSessionSlots;
-        this.sessionPersistencePort = sessionPersistencePort;
-        this.findPhotographersByIsInServicePort = findPhotographersByIsInServicePort;
-    }
+    public HandlePhotographersWithSessionSlotsService() {}
 
-    public void loadAllSlots(LocalDate date) {
-        this.allSlots = generateSessionSlots.generateSlots(date);
-    }
 
-    public void loadBusySessions (LocalDate date, List<String> freeStatuses){
-        this.busySessions = sessionPersistencePort.findByDateAndStatusNotIn(date,freeStatuses);
-    }
+    /**
+     * Calculate all the blocked slots for each photographer in service.
+     *
+     * @param sessions sessions with busy statuses of a date
+     * @param photographers photographers with isInService = true
+     * @return A map of photographer with id as key and a set as value with the blocked slots for that photographer
+     * */
+    public Map<UUID, Set<LocalTime>> calculatePhotographersBlockedSlots(List<Session> sessions, List<User> photographers){
 
-    public void loadPhotographersInService(){
-        this.photographersInService = findPhotographersByIsInServicePort.findPhotographersByIsInService(true);
-    }
-
-    public void calculatePhotographersBlockedSlots(){
-
-        //clean previous data
-        this.photographersBlockedSlots.clear();
-
-        //Calculate
-        for(User photographer: photographersInService ){
+        Map<UUID, Set<LocalTime>> photographersBlockedSlots = new HashMap<>();
+        for(User photographer: photographers ){
             Set<LocalTime> blocked = new HashSet<>();
 
-            List<Session> sessionsOfCurrentPhotographer = busySessions.stream()
+            List<Session> sessionsOfCurrentPhotographer = sessions.stream()
                     .filter(s ->
                             s.getPhotographer().getId().equals(photographer.getId())).toList();
 
@@ -69,50 +41,64 @@ public class HandlePhotographersWithSessionSlotsService {
                 blocked.add(currentSession.getSessionTime().plusMinutes(sessionDuration));
             }
 
-            this.photographersBlockedSlots.put(photographer.getId(),blocked);
+            photographersBlockedSlots.put(photographer.getId(),blocked);
         }
 
+        return photographersBlockedSlots;
     }
 
-    public void calculateAllAvailableSlots(){
-        //clear previous data
-        this.availableSlots.clear();
+    /**
+     * Calculate all the still available slots to have a session (left slots).
+     *
+     * @param sessions sessions with busy statuses of a date
+     * @param photographers photographers with isInService = true
+     * @param slots all possible slots (raw data)
+     * @return a list with the available slots
+     * */
+    public List<LocalTime> calculateAvailableSlots(List<Session> sessions, List<User> photographers,List<LocalTime> slots){
 
-        // previous value required
-        this.calculatePhotographersBlockedSlots();
+        // previous values required
+        Map<UUID ,Set<LocalTime>> photographersBlockedSlots = this.calculatePhotographersBlockedSlots(sessions,photographers);
 
-        // Calculate the available slots
-        for(LocalTime currentSlot : allSlots){
+
+        List<LocalTime> availableSlots = new ArrayList<>();
+        for(LocalTime currentSlot : slots){
 
             List<User> freePhotographersInSlot = new ArrayList<>();
 
-            freePhotographersInSlot =  photographersInService.stream().filter(p ->!
+            freePhotographersInSlot =  photographers.stream().filter(p ->!
                     photographersBlockedSlots.getOrDefault(p.getId(),Collections.emptySet()).contains(currentSlot)).toList();
 
             if(!freePhotographersInSlot.isEmpty()){
-                this.availableSlots.add(currentSlot);
+                availableSlots.add(currentSlot);
             }
-
         }
+
+        return availableSlots;
     }
 
-    public List<User> getAvailablePhotographersAtTime(LocalTime time){
+
+    /**
+     * Calculate what users are free in a given slot.
+     *
+     * @param sessions sessions with busy statuses of a date
+     * @param photographers photographers with isInService = true
+     * @param time the slot or time you want to find an available photographer
+     * @return A list with the found users
+     * */
+    public List<User> CalculateAvailablePhotographersAtTime(List<Session>sessions,List<User>photographers,LocalTime time){
 
         // previous value required
-        this.calculatePhotographersBlockedSlots();
+       Map<UUID,Set< LocalTime>> photographersBlockedSlots = calculatePhotographersBlockedSlots(sessions,photographers);
 
-        List<User> photographers = new ArrayList<>();
-
-        for (User currentPhotographer : photographersInService){
+        List<User> freePhotographers = new ArrayList<>();
+        for (User currentPhotographer : photographers){
 
             if(!photographersBlockedSlots.getOrDefault(currentPhotographer.getId(),Collections.emptySet()).contains(time)){
-                photographers.add(currentPhotographer);
+                freePhotographers.add(currentPhotographer);
             }
         }
-        return  photographers;
+        return  freePhotographers;
 
     }
-
-
-
 }
