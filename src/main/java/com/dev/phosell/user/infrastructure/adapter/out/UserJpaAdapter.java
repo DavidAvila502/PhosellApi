@@ -1,9 +1,6 @@
 package com.dev.phosell.user.infrastructure.adapter.out;
 
-import com.dev.phosell.user.application.port.out.FindPhotographersByIsInServicePort;
-import com.dev.phosell.user.application.port.out.LoadUserPort;
-import com.dev.phosell.user.application.port.out.RegisterUserPort;
-import com.dev.phosell.user.application.port.out.UserPersistencePort;
+import com.dev.phosell.user.application.port.out.*;
 import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;
 import com.dev.phosell.user.infrastructure.persistence.jpa.entity.UserEntity;
@@ -14,12 +11,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Repository
 public class UserJpaAdapter implements
-        UserPersistencePort , LoadUserPort,
-        RegisterUserPort, FindPhotographersByIsInServicePort {
+        UserPersistencePort , FindUserByEmailPort,
+        RegisterUserPort, FindPhotographersByIsInServicePort, FindUserByIdPort {
 
     private final UserJpaRepository userJpaRepository;
     private final UserMapper userMapper;
@@ -55,5 +53,11 @@ public class UserJpaAdapter implements
     public List<User> findPhotographersByIsInService(Boolean isInService) {
         return userJpaRepository.findPhotographersByIsInService(isInService)
                 .stream().map(u -> userMapper.toDomain(u)).toList();
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        Optional<UserEntity> user = userJpaRepository.findById(id);
+        return user.map(u-> userMapper.toDomain(u));
     }
 }

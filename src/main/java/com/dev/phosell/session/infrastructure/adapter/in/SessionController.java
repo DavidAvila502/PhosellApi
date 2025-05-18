@@ -2,18 +2,20 @@ package com.dev.phosell.session.infrastructure.adapter.in;
 
 import com.dev.phosell.session.application.service.FindAllSessionsService;
 import com.dev.phosell.session.application.service.GetAvailableSessionSlotsService;
+import com.dev.phosell.session.application.service.RegisterSessionService;
 import com.dev.phosell.session.domain.model.Session;
+import com.dev.phosell.session.infrastructure.dto.SessionInsertDto;
 import com.dev.phosell.session.infrastructure.dto.SessionResponseDto;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -24,17 +26,20 @@ public class SessionController {
     public final FindAllSessionsService findAllSessionsService;
     public final SessionMapper sessionMapper;
     public  final GetAvailableSessionSlotsService getAvailableSessionSlotsService;
+    public final RegisterSessionService registerSessionService;
 
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
             SessionMapper sessionMapper,
-            GetAvailableSessionSlotsService getAvailableSessionSlotsService
+            GetAvailableSessionSlotsService getAvailableSessionSlotsService,
+            RegisterSessionService registerSessionService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
         this.sessionMapper = sessionMapper;
         this.getAvailableSessionSlotsService = getAvailableSessionSlotsService;
+        this.registerSessionService = registerSessionService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -54,6 +59,24 @@ public class SessionController {
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
     {
         return ResponseEntity.ok(getAvailableSessionSlotsService.getAvailableSlots(date));
+    }
+
+
+//    @PreAuthorize("hasRole('CLIENT')")
+    @PostMapping
+    public ResponseEntity<SessionResponseDto> saveSession(@Valid @RequestBody SessionInsertDto sessionInsert){
+
+        Session savedSession = registerSessionService.RegisterSession(sessionInsert);
+
+        SessionResponseDto sessionResponse = sessionMapper.toSessionResponseDto(savedSession);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedSession.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(sessionResponse);
     }
 
 }

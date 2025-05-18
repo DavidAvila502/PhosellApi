@@ -1,6 +1,6 @@
 package com.dev.phosell.authentication.application.service;
 
-import com.dev.phosell.user.application.port.out.LoadUserPort;
+import com.dev.phosell.user.application.port.out.FindUserByEmailPort;
 import com.dev.phosell.user.application.port.out.RegisterUserPort;
 import com.dev.phosell.user.domain.exception.UserExistsException;
 import com.dev.phosell.user.domain.model.Role;
@@ -13,22 +13,22 @@ import java.util.Optional;
 @Service
 public class RegisterClientService {
     private final BCryptPasswordEncoder passwordEncoder;
-    private final LoadUserPort loadUserPort;
+    private final FindUserByEmailPort findUserByEmailPort;
     private  final RegisterUserPort registerUserPort;
 
     public RegisterClientService(
             BCryptPasswordEncoder passwordEncoder,
-            LoadUserPort loadUserPort,
+            FindUserByEmailPort findUserByEmailPort,
             RegisterUserPort registerUserPort
     ){
         this.passwordEncoder = passwordEncoder;
-        this.loadUserPort = loadUserPort;
+        this.findUserByEmailPort = findUserByEmailPort;
         this.registerUserPort = registerUserPort;
     }
 
     public User RegisterClient(User user){
 
-        Optional<User> foundUser = loadUserPort.findByEmail(user.getEmail());
+        Optional<User> foundUser = findUserByEmailPort.findByEmail(user.getEmail());
 
         if(foundUser.isPresent()){
             throw new UserExistsException(foundUser.get().getEmail());

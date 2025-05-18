@@ -1,6 +1,6 @@
 package com.dev.phosell.authentication.application.service;
 
-import com.dev.phosell.user.application.port.out.LoadUserPort;
+import com.dev.phosell.user.application.port.out.FindUserByEmailPort;
 import com.dev.phosell.authentication.domain.model.CustomUserDetails;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,16 +10,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService{
 
-    private final LoadUserPort loadUserPort;
+    private final FindUserByEmailPort findUserByEmailPort;
 
-    public CustomUserDetailsService(LoadUserPort loadUserPort){
-        this.loadUserPort = loadUserPort;
+    public CustomUserDetailsService(FindUserByEmailPort findUserByEmailPort){
+        this.findUserByEmailPort = findUserByEmailPort;
     }
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) {
 
-        User user = loadUserPort.findByEmail(username)
+        User user = findUserByEmailPort.findByEmail(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
 
         return new CustomUserDetails(user);
