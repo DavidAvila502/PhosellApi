@@ -1,4 +1,4 @@
-package com.dev.phosell.session.infrastructure.dto;
+package com.dev.phosell.session.application.dto;
 
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;

@@ -1,4 +1,4 @@
-package com.dev.phosell.session.application.port.out;
+package com.dev.phosell.session.domain.port;
 
 import com.dev.phosell.session.domain.model.Session;
 import java.time.LocalDate;

@@ -1,4 +1,4 @@
-package com.dev.phosell.session.infrastructure.dto;
+package com.dev.phosell.session.application.dto;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;

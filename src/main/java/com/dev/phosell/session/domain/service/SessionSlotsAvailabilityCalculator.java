@@ -1,23 +1,18 @@
-package com.dev.phosell.session.application.service;
+package com.dev.phosell.session.domain.service;
 
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.user.domain.model.User;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.*;
 
-@Data
-@Service
-public class HandlePhotographersWithSessionSlotsService {
+public class SessionSlotsAvailabilityCalculator {
 
-    @Value("${session.duration}")
-    private int sessionDuration;
+    private final int sessionDuration;
 
     // constructor
-    public HandlePhotographersWithSessionSlotsService() {}
-
+    public SessionSlotsAvailabilityCalculator(int sessionDuration) {
+        this.sessionDuration = sessionDuration;
+    }
 
     /**
      * Calculate all the blocked slots for each photographer in service.

@@ -1,4 +1,4 @@
-package com.dev.phosell.session.domain.exception;
+package com.dev.phosell.session.application.exception;
 
 public class SessionAlreadyTakenException extends  RuntimeException{
 

@@ -1,4 +1,4 @@
-package com.dev.phosell.session.infrastructure.dto;
+package com.dev.phosell.session.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ClientSessionDto {
+public class PhotographerSessionDto {
     private UUID id;
     private String fullName;
     private String phone;

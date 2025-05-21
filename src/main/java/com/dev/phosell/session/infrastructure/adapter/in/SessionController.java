@@ -3,9 +3,8 @@ package com.dev.phosell.session.infrastructure.adapter.in;
 import com.dev.phosell.session.application.service.FindAllSessionsService;
 import com.dev.phosell.session.application.service.GetAvailableSessionSlotsService;
 import com.dev.phosell.session.application.service.RegisterSessionService;
-import com.dev.phosell.session.domain.model.Session;
-import com.dev.phosell.session.infrastructure.dto.SessionInsertDto;
-import com.dev.phosell.session.infrastructure.dto.SessionResponseDto;
+import com.dev.phosell.session.application.dto.SessionInsertDto;
+import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
@@ -45,11 +44,8 @@ public class SessionController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<SessionResponseDto>> findAll(){
-        List<Session> sessions = findAllSessionsService.findAll();
-
-        List<SessionResponseDto> response = sessions.stream()
-                .map(session -> sessionMapper.toSessionResponseDto(session)).toList();
-        return  ResponseEntity.ok(response);
+        List<SessionResponseDto> sessions = findAllSessionsService.findAll();
+        return  ResponseEntity.ok(sessions);
     }
 
 
@@ -66,9 +62,7 @@ public class SessionController {
     @PostMapping
     public ResponseEntity<SessionResponseDto> saveSession(@Valid @RequestBody SessionInsertDto sessionInsert){
 
-        Session savedSession = registerSessionService.RegisterSession(sessionInsert);
-
-        SessionResponseDto sessionResponse = sessionMapper.toSessionResponseDto(savedSession);
+        SessionResponseDto savedSession = registerSessionService.RegisterSession(sessionInsert);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -76,7 +70,7 @@ public class SessionController {
                 .buildAndExpand(savedSession.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(sessionResponse);
+        return ResponseEntity.created(location).body(savedSession);
     }
 
 }

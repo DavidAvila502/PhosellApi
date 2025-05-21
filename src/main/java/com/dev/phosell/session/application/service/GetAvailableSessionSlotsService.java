@@ -1,8 +1,10 @@
 package com.dev.phosell.session.application.service;
 
-import com.dev.phosell.session.application.port.out.SessionPersistencePort;
+import com.dev.phosell.session.domain.port.SessionPersistencePort;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
+import com.dev.phosell.session.domain.service.GenerateSessionSlots;
+import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator;
 import com.dev.phosell.user.application.port.out.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.stereotype.Service;
@@ -12,18 +14,18 @@ import java.util.*;
 
 @Service
 public class GetAvailableSessionSlotsService {
-    private final HandlePhotographersWithSessionSlotsService handlePhotographersWithSessionSlotsService;
+    private final SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator;
     private final GenerateSessionSlots generateSessionSlots;
     private final FindPhotographersByIsInServicePort findPhotographersByIsInServicePort;
     private final SessionPersistencePort sessionPersistencePort;
 
     public GetAvailableSessionSlotsService(
-            HandlePhotographersWithSessionSlotsService handlePhotographersWithSessionSlotsService,
+            SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator,
             GenerateSessionSlots generateSessionSlots,
             FindPhotographersByIsInServicePort findPhotographersByIsInServicePort,
             SessionPersistencePort sessionPersistencePort
     ){
-        this.handlePhotographersWithSessionSlotsService = handlePhotographersWithSessionSlotsService;
+        this.sessionSlotsAvailabilityCalculator = sessionSlotsAvailabilityCalculator;
         this.generateSessionSlots = generateSessionSlots;
         this.findPhotographersByIsInServicePort = findPhotographersByIsInServicePort;
         this.sessionPersistencePort = sessionPersistencePort;
@@ -45,7 +47,7 @@ public class GetAvailableSessionSlotsService {
 
         List<LocalTime> allPossibleSlots = generateSessionSlots.generateSlots(date);
 
-        List<LocalTime> availableSlots = handlePhotographersWithSessionSlotsService
+        List<LocalTime> availableSlots = sessionSlotsAvailabilityCalculator
                 .calculateAvailableSlots(busySessions,photographersInService,allPossibleSlots);
 
 
