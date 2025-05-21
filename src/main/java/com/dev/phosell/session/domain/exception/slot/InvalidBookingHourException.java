@@ -1,4 +1,4 @@
-package com.dev.phosell.session.domain.exception;
+package com.dev.phosell.session.domain.exception.slot;
 
 public class InvalidBookingHourException extends RuntimeException {
     public InvalidBookingHourException() {

@@ -1,6 +1,7 @@
 package com.dev.phosell.session.domain.validator;
 
-import com.dev.phosell.session.domain.exception.*;
+import com.dev.phosell.session.domain.exception.slot.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

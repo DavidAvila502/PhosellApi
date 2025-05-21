@@ -58,7 +58,7 @@ public class SessionController {
     }
 
 
-//    @PreAuthorize("hasRole('CLIENT')")
+    @PreAuthorize("hasRole('CLIENT')")
     @PostMapping
     public ResponseEntity<SessionResponseDto> saveSession(@Valid @RequestBody SessionInsertDto sessionInsert){
 

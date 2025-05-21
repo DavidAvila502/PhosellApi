@@ -1,6 +1,8 @@
 package com.dev.phosell.session.domain.model;
 
+import com.dev.phosell.session.domain.exception.session.InvalidSessionValueException;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
+import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -44,7 +46,70 @@ public class Session {
     }
 
     public Session(){
+        this.id = UUID.randomUUID();
     }
+    // validations
+    public void validate(){
+        validateId();
+        validateClient();
+        validatePhotographer();
+        validateSessionPackage();
+        validateSessionDate();
+        validateSessionTime();
+        validateLocation();
+        validateSessionStatus();
+    }
+
+
+    private void validateId(){
+        if(this.id == null){
+            throw new InvalidSessionValueException("id",null);
+        }
+    }
+    private void validateClient(){
+        if(this.client == null){
+            throw new InvalidSessionValueException("client",null);
+        }
+    }
+    private void validatePhotographer(){
+        if(this.photographer == null){
+            throw new InvalidSessionValueException("photographer",null);
+        }
+
+        if(this.photographer.getRole() != Role.PHOTOGRAPHER){
+            throw new InvalidSessionValueException("photographer.role",photographer.getRole().toString(),"the photographer has not the photographer role");
+        }
+    }
+    private void validateSessionPackage(){
+        if(this.sessionPackage == null){
+            throw new InvalidSessionValueException("sessionPackage",null);
+        }
+    }
+    private void validateSessionDate(){
+        if(this.sessionDate == null){
+            throw new InvalidSessionValueException("sessionDate",null);
+        }
+    }
+    private void validateSessionTime(){
+        if(this.sessionTime == null){
+            throw new InvalidSessionValueException("sessionTime",null);
+        }
+    }
+    private void validateLocation(){
+        if(this.location == null){
+            throw new InvalidSessionValueException("location",null);
+        }
+        if(this.location.length() <= 15){
+            throw new InvalidSessionValueException("location",this.location,"the location must be at least 15 characters");
+
+        }
+    }
+    private void validateSessionStatus(){
+        if(this.sessionStatus == null){
+            throw new InvalidSessionValueException("sessionStatus",null);
+        }
+    }
+
 
     // getter
     public UUID getId() {

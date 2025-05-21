@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -45,8 +45,7 @@ public class SessionEntity {
     }
 
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @Column(name = "id", updatable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -83,7 +82,7 @@ public class SessionEntity {
     @Column(name = "cancelled_at")
     private Timestamp cancelledAt;
 
-    // generated in db
+    @CreationTimestamp
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
 

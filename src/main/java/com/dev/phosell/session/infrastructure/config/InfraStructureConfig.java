@@ -1,5 +1,6 @@
 package com.dev.phosell.session.infrastructure.config;
 
+import com.dev.phosell.session.domain.service.ChooseRandomPhotographer;
 import com.dev.phosell.session.domain.service.GenerateSessionSlots;
 import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator;
 import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
@@ -42,5 +43,9 @@ public class InfraStructureConfig {
                 sessionConfig.getAdvanceHours(),
                 sessionConfig.getDuration()
         );
+    }
+
+    @Bean public ChooseRandomPhotographer chooseRandomPhotographer(){
+        return  new ChooseRandomPhotographer();
     }
 }
