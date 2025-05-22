@@ -34,7 +34,5 @@ public class RefreshTokenMapper {
         refreshTokenEntity.setExpiryDate(refreshToken.getExpiryDate());
 
         return  refreshTokenEntity;
-
     }
-
 }

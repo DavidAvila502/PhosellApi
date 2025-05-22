@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -16,8 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SessionPackageEntity {
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @Column(name = "id",updatable = false)
     private UUID id;
 
     @Column(nullable = false,unique = true)

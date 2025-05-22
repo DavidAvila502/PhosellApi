@@ -1,46 +1,56 @@
 package com.dev.phosell.authentication.application.service;
 
-import com.dev.phosell.authentication.application.port.out.LoadUserPort;
-import com.dev.phosell.authentication.application.port.out.RegisterUserPort;
-import com.dev.phosell.user.domain.exception.UserExistsException;
+import com.dev.phosell.authentication.application.dto.RegisterClientDto;
+import com.dev.phosell.authentication.application.dto.RegisterClientResponseDto;
+import com.dev.phosell.authentication.application.mapper.AuthUserDtoMapper;
+import com.dev.phosell.user.domain.port.FindUserByEmailPort;
+import com.dev.phosell.user.domain.port.RegisterUserPort;
+import com.dev.phosell.user.application.exception.UserExistsException;
 import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class RegisterClientService {
     private final BCryptPasswordEncoder passwordEncoder;
-    private final LoadUserPort loadUserPort;
+    private final FindUserByEmailPort findUserByEmailPort;
     private  final RegisterUserPort registerUserPort;
+    private final AuthUserDtoMapper authUserDtoMapper;
 
     public RegisterClientService(
             BCryptPasswordEncoder passwordEncoder,
-            LoadUserPort loadUserPort,
-            RegisterUserPort registerUserPort
+            FindUserByEmailPort findUserByEmailPort,
+            RegisterUserPort registerUserPort,
+            AuthUserDtoMapper authUserDtoMapper
     ){
         this.passwordEncoder = passwordEncoder;
-        this.loadUserPort = loadUserPort;
+        this.findUserByEmailPort = findUserByEmailPort;
         this.registerUserPort = registerUserPort;
+        this.authUserDtoMapper = authUserDtoMapper;
     }
 
-    public User RegisterClient(User user){
-
-        Optional<User> foundUser = loadUserPort.findByEmail(user.getEmail());
-
-        if(foundUser.isPresent()){
-            throw new UserExistsException(foundUser.get().getEmail());
+    public RegisterClientResponseDto registerClient(RegisterClientDto clientDto)
+    {
+        if (findUserByEmailPort.findByEmail(clientDto.getEmail()).isPresent()) {
+            throw new UserExistsException(clientDto.getEmail());
         }
 
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        User newClient = authUserDtoMapper.toUser(clientDto);
 
-        user.setPassword(hashedPassword);
+        newClient.setRole(Role.CLIENT);
 
-        user.setRole(Role.CLIENT);
+        newClient.validateClient();
 
-        User savedUser = registerUserPort.save(user);
-        return savedUser;
+        String hashedPassword = passwordEncoder.encode(newClient.getPassword());
+
+        newClient.setPassword(hashedPassword);
+
+        User savedUser = registerUserPort.save(newClient);
+
+        RegisterClientResponseDto responseDto = authUserDtoMapper.toRegisterClientResponse(savedUser);
+
+        return responseDto;
     }
 }

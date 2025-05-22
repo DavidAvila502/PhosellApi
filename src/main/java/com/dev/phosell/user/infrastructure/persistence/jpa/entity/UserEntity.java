@@ -19,8 +19,7 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @Column(name = "id", updatable = false)
     private UUID id;
 
     @Column(name = "full_name", nullable = false)
@@ -55,6 +54,9 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column(name = "is_in_service")
+    private Boolean isInService;
 
     @Column(name = "created_by")
     private UUID createdById;
