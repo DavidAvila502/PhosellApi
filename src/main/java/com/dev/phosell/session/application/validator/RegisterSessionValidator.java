@@ -1,10 +1,10 @@
 package com.dev.phosell.session.application.validator;
 
-import com.dev.phosell.sessionpackage.application.port.out.FindSessionPackageByIdPort;
-import com.dev.phosell.sessionpackage.domain.exception.SessionPackageNotFoundExcaption;
+import com.dev.phosell.sessionpackage.domain.port.FindSessionPackageByIdPort;
+import com.dev.phosell.sessionpackage.application.exception.SessionPackageNotFoundExcaption;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
-import com.dev.phosell.user.application.port.out.FindUserByIdPort;
-import com.dev.phosell.user.domain.exception.UserNotFoundException;
+import com.dev.phosell.user.domain.port.FindUserByIdPort;
+import com.dev.phosell.user.application.exception.UserNotFoundException;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.stereotype.Component;
 

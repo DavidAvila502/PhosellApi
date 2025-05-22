@@ -1,8 +1,8 @@
 package com.dev.phosell.session.application.service;
 
-import com.dev.phosell.authentication.domain.model.CustomUserDetails;
+import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.session.application.dto.SessionResponseDto;
-import com.dev.phosell.session.application.mapper.SessionToDtoMapper;
+import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.application.validator.RegisterSessionValidator;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
 import com.dev.phosell.session.domain.model.Session;
@@ -12,7 +12,7 @@ import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator
 import com.dev.phosell.session.application.dto.SessionInsertDto;
 import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
-import com.dev.phosell.user.application.port.out.FindPhotographersByIsInServicePort;
+import com.dev.phosell.user.domain.port.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class RegisterSessionService {
 
     private final SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator;
     private final FindPhotographersByIsInServicePort findPhotographersByIsInServicePort;
-    private final SessionToDtoMapper sessionToDtoMapper;
+    private final SessionDtoMapper sessionDtoMapper;
     private final RegisterSessionValidator registerSessionValidator;
     private final SessionBookingPolicyValidator sessionBookingPolicyValidator;
     private final ChooseRandomPhotographer chooseRandomPhotographer;
@@ -36,7 +36,7 @@ public class RegisterSessionService {
             SessionPersistencePort sessionPersistencePort,
             SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator,
             FindPhotographersByIsInServicePort findPhotographersByIsInServicePort,
-            SessionToDtoMapper sessionToDtoMapper,
+            SessionDtoMapper sessionDtoMapper,
             RegisterSessionValidator registerSessionValidator,
             SessionBookingPolicyValidator sessionBookingPolicyValidator,
             ChooseRandomPhotographer chooseRandomPhotographer
@@ -45,7 +45,7 @@ public class RegisterSessionService {
 
         this.sessionSlotsAvailabilityCalculator = sessionSlotsAvailabilityCalculator;
         this.findPhotographersByIsInServicePort = findPhotographersByIsInServicePort;
-        this.sessionToDtoMapper = sessionToDtoMapper;
+        this.sessionDtoMapper = sessionDtoMapper;
         this.registerSessionValidator = registerSessionValidator;
         this.sessionBookingPolicyValidator = sessionBookingPolicyValidator;
         this.chooseRandomPhotographer = chooseRandomPhotographer;
@@ -99,6 +99,6 @@ public class RegisterSessionService {
         Session savedSession = sessionPersistencePort.save(session);
 
 
-        return sessionToDtoMapper.toSessionResponseDto(savedSession);
+        return sessionDtoMapper.toSessionResponseDto(savedSession);
     }
 }

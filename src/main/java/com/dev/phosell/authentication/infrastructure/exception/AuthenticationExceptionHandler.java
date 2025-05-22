@@ -1,10 +1,9 @@
 package com.dev.phosell.authentication.infrastructure.exception;
 
-import com.dev.phosell.authentication.domain.exception.token.InvalidRefreshTokenException;
-import com.dev.phosell.authentication.domain.exception.auth.InvalidUserOrPasswordException;
+import com.dev.phosell.authentication.domain.exception.InvalidRefreshTokenException;
 import com.dev.phosell.authentication.infrastructure.adapter.in.AuthenticationController;
-import com.dev.phosell.user.domain.exception.UserExistsException;
-import com.dev.phosell.user.domain.exception.UserNotFoundException;
+import com.dev.phosell.user.application.exception.UserExistsException;
+import com.dev.phosell.user.application.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

@@ -5,7 +5,7 @@ import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.session.domain.service.GenerateSessionSlots;
 import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator;
-import com.dev.phosell.user.application.port.out.FindPhotographersByIsInServicePort;
+import com.dev.phosell.user.domain.port.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;

@@ -1,6 +1,6 @@
 package com.dev.phosell.authentication.infrastructure.adapter.out;
 
-import com.dev.phosell.authentication.application.port.out.RefreshTokenPersistencePort;
+import com.dev.phosell.authentication.domain.port.RefreshTokenPersistencePort;
 import com.dev.phosell.authentication.domain.model.RefreshToken;
 import com.dev.phosell.authentication.infrastructure.persistence.jpa.entity.RefreshTokenEntity;
 import com.dev.phosell.authentication.infrastructure.persistence.mapper.RefreshTokenMapper;

@@ -1,12 +1,9 @@
 package com.dev.phosell.user.infrastructure.adapter.in;
 
-
-import com.dev.phosell.user.application.service.UserMeService;
-import com.dev.phosell.user.domain.model.User;
-import com.dev.phosell.user.infrastructure.dto.PhotographerResponseDto;
+import com.dev.phosell.user.application.dto.PhotographerResponseDto;
+import com.dev.phosell.user.application.service.PhotographerMeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,26 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/photographers")
 public class PhotographerController {
 
-    private final UserMeService userMeService;
+    private final PhotographerMeService photographerMeService;
 
-    public PhotographerController(UserMeService userMeService){
-        this.userMeService = userMeService;
+    public PhotographerController(PhotographerMeService photographerMeService){
+        this.photographerMeService = photographerMeService;
     }
 
     @GetMapping("/me")
     public ResponseEntity<PhotographerResponseDto> me(){
-        User photographer = userMeService.me();
 
-        PhotographerResponseDto photographerResponseDto = new
-                PhotographerResponseDto(
-                        photographer.getId(),
-                        photographer.getFullName(),
-                        photographer.getEmail(),
-                        photographer.getPhone(),
-                        photographer.getAddress(),
-                        photographer.getCurp()
-
-        );
+        PhotographerResponseDto photographerResponseDto = photographerMeService.me();
 
         return ResponseEntity.ok(photographerResponseDto);
     }

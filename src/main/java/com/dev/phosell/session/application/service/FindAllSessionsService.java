@@ -1,6 +1,6 @@
 package com.dev.phosell.session.application.service;
 import com.dev.phosell.session.application.dto.SessionResponseDto;
-import com.dev.phosell.session.application.mapper.SessionToDtoMapper;
+import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +9,14 @@ import java.util.List;
 @Service
 public class FindAllSessionsService {
     private  final SessionPersistencePort sessionPersistencePort;
-    private final SessionToDtoMapper sessionToDtoMapper;
+    private final SessionDtoMapper sessionDtoMapper;
 
-    public FindAllSessionsService(SessionPersistencePort sessionPersistencePort, SessionToDtoMapper sessionToDtoMapper){
+    public FindAllSessionsService(SessionPersistencePort sessionPersistencePort, SessionDtoMapper sessionDtoMapper){
         this.sessionPersistencePort = sessionPersistencePort;
-        this.sessionToDtoMapper =sessionToDtoMapper;
+        this.sessionDtoMapper = sessionDtoMapper;
     }
     public List<SessionResponseDto> findAll(){
         return sessionPersistencePort.findAll().stream()
-                .map(s -> sessionToDtoMapper.toSessionResponseDto(s)).toList();
+                .map(s -> sessionDtoMapper.toSessionResponseDto(s)).toList();
     }
 }

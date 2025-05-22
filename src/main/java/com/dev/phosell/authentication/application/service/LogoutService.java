@@ -1,9 +1,11 @@
 package com.dev.phosell.authentication.application.service;
 
-import com.dev.phosell.authentication.application.port.out.RefreshTokenPersistencePort;
-import com.dev.phosell.authentication.domain.exception.token.InvalidRefreshTokenException;
-import com.dev.phosell.authentication.domain.model.CustomUserDetails;
+import com.dev.phosell.authentication.domain.port.RefreshTokenPersistencePort;
+import com.dev.phosell.authentication.domain.exception.InvalidRefreshTokenException;
+import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.authentication.domain.model.RefreshToken;
+import com.dev.phosell.authentication.infrastructure.security.JwtService;
+import com.dev.phosell.authentication.infrastructure.security.RefreshTokenCookieService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;

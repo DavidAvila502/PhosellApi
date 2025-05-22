@@ -19,8 +19,7 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @Column(name = "id", updatable = false)
     private UUID id;
 
     @Column(name = "full_name", nullable = false)

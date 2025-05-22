@@ -1,9 +1,13 @@
 package com.dev.phosell.authentication.application.service;
 
-import com.dev.phosell.authentication.domain.model.CustomUserDetails;
+import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.authentication.domain.model.RefreshToken;
-import com.dev.phosell.authentication.infrastructure.dto.LoginResponseDto;
-import com.dev.phosell.authentication.infrastructure.dto.LoginUserDto;
+import com.dev.phosell.authentication.application.dto.LoginResponseDto;
+import com.dev.phosell.authentication.application.dto.LoginUserDto;
+import com.dev.phosell.authentication.infrastructure.security.AuthenticationService;
+import com.dev.phosell.authentication.infrastructure.security.JwtService;
+import com.dev.phosell.authentication.infrastructure.security.RefreshTokenCookieService;
+import com.dev.phosell.authentication.infrastructure.service.SaveRefreshTokenInDbService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
@@ -30,30 +34,22 @@ public class LoginService {
 
     public LoginResponseDto login(LoginUserDto loginUser, HttpServletResponse response){
 
-        // Authenticate the user
         CustomUserDetails authenticatedUser = authenticationService.authenticate(loginUser);
 
-        // Generate tokens
         String accessToken = jwtService.generateAccessToken(authenticatedUser);
 
-        String refreshToken = jwtService.generateRefreshToken(authenticatedUser);
+        String refreshTokenString = jwtService.generateRefreshToken(authenticatedUser);
 
-        // Store the refresh token in database
         RefreshToken refreshTokenObject = saveRefreshTokenInDbService.
-                SaveRefreshToken(refreshToken, authenticatedUser.getUser());
+                SaveRefreshToken(refreshTokenString, authenticatedUser.getUser());
 
-        // Generate refreshToken Cookie
         Cookie refreshTokenCookie = refreshTokenCookieService.
                 generateCookie(refreshTokenObject.getToken(),"/api/auth/refresh");
 
-        //Add refreshTokenCookie to response
         response.addCookie(refreshTokenCookie);
 
 
         return new LoginResponseDto(
                 authenticatedUser.getEmail(),accessToken,jwtService.getAccessTokenExpiration());
-
     }
-
-
 }

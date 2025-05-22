@@ -1,8 +1,8 @@
 package com.dev.phosell.user.infrastructure.adapter.out;
 
-import com.dev.phosell.user.application.port.out.*;
 import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;
+import com.dev.phosell.user.domain.port.*;
 import com.dev.phosell.user.infrastructure.persistence.jpa.entity.UserEntity;
 import com.dev.phosell.user.infrastructure.persistence.jpa.repository.UserJpaRepository;
 import com.dev.phosell.user.infrastructure.persistence.mapper.UserMapper;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Repository
 public class UserJpaAdapter implements
-        UserPersistencePort , FindUserByEmailPort,
+        UserPersistencePort, FindUserByEmailPort,
         RegisterUserPort, FindPhotographersByIsInServicePort, FindUserByIdPort {
 
     private final UserJpaRepository userJpaRepository;

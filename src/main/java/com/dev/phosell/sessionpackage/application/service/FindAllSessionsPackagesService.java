@@ -1,6 +1,6 @@
 package com.dev.phosell.sessionpackage.application.service;
 
-import com.dev.phosell.sessionpackage.application.port.out.SessionPackagePersistencePort;
+import com.dev.phosell.sessionpackage.domain.port.SessionPackagePersistencePort;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
 import org.springframework.stereotype.Service;
 

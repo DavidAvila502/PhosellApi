@@ -1,7 +1,7 @@
 package com.dev.phosell.sessionpackage.infrastructure.adapter.out;
 
-import com.dev.phosell.sessionpackage.application.port.out.FindSessionPackageByIdPort;
-import com.dev.phosell.sessionpackage.application.port.out.SessionPackagePersistencePort;
+import com.dev.phosell.sessionpackage.domain.port.FindSessionPackageByIdPort;
+import com.dev.phosell.sessionpackage.domain.port.SessionPackagePersistencePort;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
 import com.dev.phosell.sessionpackage.infrastructure.persistence.jpa.entity.SessionPackageEntity;
 import com.dev.phosell.sessionpackage.infrastructure.persistence.jpa.repository.SessionPackageJpaRepository;

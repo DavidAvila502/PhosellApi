@@ -38,7 +38,7 @@ public class UserMapper {
                 user.getIdPhotoFront(),
                 user.getIdPhotoBack(),
                 user.getRole(),
-                user.getIsInService(),
+                user.getInService(),
                 null,
                 null
         );
