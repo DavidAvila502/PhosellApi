@@ -11,4 +11,12 @@ public class InvalidSessionValueException extends RuntimeException {
     public InvalidSessionValueException(String field, String value, String description) {
         super(String.format("Invalid value at %s: %s -%s",field,value,description));
     }
+
+    public String getField() {
+        return field;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
