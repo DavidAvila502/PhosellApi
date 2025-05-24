@@ -12,6 +12,7 @@ import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator
 import com.dev.phosell.session.application.dto.SessionInsertDto;
 import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
+import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.port.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -59,7 +60,10 @@ public class RegisterSessionService {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        if(!userDetails.getUser().getId().equals(client.getId())){
+        User authenticatedUser = userDetails.getUser();
+
+        if(!authenticatedUser.getId().equals(client.getId()) || authenticatedUser.getRole() != Role.CLIENT)
+        {
             throw new AuthorizationDeniedException("Unauthorized action");
         }
 

@@ -8,6 +8,7 @@ import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -22,6 +23,11 @@ public class SessionJpaAdapter implements SessionPersistencePort {
     ){
         this.sessionJpaRepository = sessionJpaRepository;
         this.sessionMapper = sessionMapper;
+    }
+
+    @Override
+    public Optional<Session> findById(UUID id) {
+        return sessionJpaRepository.findById(id).map(s -> sessionMapper.toDomain(s));
     }
 
     @Override

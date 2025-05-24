@@ -1,0 +1,56 @@
+package com.dev.phosell.session.application.service;
+
+import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
+import com.dev.phosell.session.application.dto.SessionStatusChangeDto;
+import com.dev.phosell.session.domain.model.Session;
+import com.dev.phosell.session.domain.model.SessionStatus;
+import com.dev.phosell.session.domain.port.SessionPersistencePort;
+import com.dev.phosell.session.domain.validator.SessionStatusChangeValidator;
+import com.dev.phosell.session.infrastructure.exception.SessionNotFoundException;
+import com.dev.phosell.user.domain.model.User;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import java.util.UUID;
+
+@Service
+public class ChangeSessionStatusService {
+
+    private final SessionStatusChangeValidator sessionStatusChangeValidator;
+    private final SessionPersistencePort sessionPersistencePort;
+
+    public ChangeSessionStatusService(
+            SessionStatusChangeValidator sessionStatusChangeValidator,
+            SessionPersistencePort sessionPersistencePort
+    )
+    {
+        this.sessionStatusChangeValidator = sessionStatusChangeValidator;
+        this.sessionPersistencePort = sessionPersistencePort;
+    }
+
+    public void ChangeStatus(UUID id,SessionStatusChangeDto sessionStatusDto){
+
+        Session session = sessionPersistencePort.findById(id)
+                .orElseThrow(() -> new SessionNotFoundException("id", id.toString()));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        User authenticatedUser = userDetails.getUser();
+
+        SessionStatus newStatusEnum = SessionStatus.fromString(sessionStatusDto.getNewSessionStatus());
+
+        sessionStatusChangeValidator
+                .validateStatusAndRolePermissions(
+                        session.getSessionStatus(),
+                        newStatusEnum,
+                        authenticatedUser.getRole()
+                );
+
+        sessionStatusChangeValidator.validateOwnerShip(session,authenticatedUser);
+
+        session.setSessionStatus(newStatusEnum);
+
+        sessionPersistencePort.save(session);
+    }
+}
