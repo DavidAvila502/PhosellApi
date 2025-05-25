@@ -8,11 +8,9 @@ import com.dev.phosell.session.application.service.RegisterSessionService;
 import com.dev.phosell.session.application.dto.SessionInsertDto;
 import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
@@ -45,7 +43,6 @@ public class SessionController {
         this.changeSessionStatusService = changeSessionStatusService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<SessionResponseDto>> findAll(){
         List<SessionResponseDto> sessions = findAllSessionsService.findAll();
@@ -53,7 +50,6 @@ public class SessionController {
     }
 
 
-    @PermitAll
     @GetMapping("/available-slots")
     public ResponseEntity<List<LocalTime>> getAvailableSlots(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
@@ -62,7 +58,6 @@ public class SessionController {
     }
 
 
-    @PreAuthorize("hasRole('CLIENT')")
     @PostMapping
     public ResponseEntity<SessionResponseDto> saveSession(@Valid @RequestBody SessionInsertDto sessionInsert){
 
@@ -77,7 +72,6 @@ public class SessionController {
         return ResponseEntity.created(location).body(savedSession);
     }
 
-    @PreAuthorize("hasAnyRole('CLIENT','PHOTOGRAPHER','ADMIN')")
     @PutMapping("/{id}/status")
     public ResponseEntity<Void> changeSessionStatus(
             @PathVariable UUID id,
