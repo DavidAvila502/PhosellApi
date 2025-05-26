@@ -1,10 +1,7 @@
 package com.dev.phosell.session.infrastructure.adapter.in;
 
-import com.dev.phosell.session.application.dto.SessionCancelDto;
-import com.dev.phosell.session.application.dto.SessionStatusChangeDto;
+import com.dev.phosell.session.application.dto.*;
 import com.dev.phosell.session.application.service.*;
-import com.dev.phosell.session.application.dto.SessionInsertDto;
-import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,6 +23,7 @@ public class SessionController {
     public final RegisterSessionService registerSessionService;
     public final ChangeSessionStatusService changeSessionStatusService;
     public final CancelSessionService cancelSessionService;
+    public final CompleteSessionService completeSessionService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -33,7 +31,8 @@ public class SessionController {
             GetAvailableSessionSlotsService getAvailableSessionSlotsService,
             RegisterSessionService registerSessionService,
             ChangeSessionStatusService changeSessionStatusService,
-            CancelSessionService cancelSessionService
+            CancelSessionService cancelSessionService,
+            CompleteSessionService completeSessionService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -42,14 +41,8 @@ public class SessionController {
         this.registerSessionService = registerSessionService;
         this.changeSessionStatusService = changeSessionStatusService;
         this.cancelSessionService = cancelSessionService;
+        this.completeSessionService = completeSessionService;
     }
-
-    @GetMapping
-    public ResponseEntity<List<SessionResponseDto>> findAll(){
-        List<SessionResponseDto> sessions = findAllSessionsService.findAll();
-        return  ResponseEntity.ok(sessions);
-    }
-
 
     @GetMapping("/available-slots")
     public ResponseEntity<List<LocalTime>> getAvailableSlots(
@@ -57,7 +50,6 @@ public class SessionController {
     {
         return ResponseEntity.ok(getAvailableSessionSlotsService.getAvailableSlots(date));
     }
-
 
     @PostMapping
     public ResponseEntity<SessionResponseDto> saveSession(@Valid @RequestBody SessionInsertDto sessionInsert){
@@ -92,4 +84,24 @@ public class SessionController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<Void> uploadPhotosLink(
+            @PathVariable UUID id,
+            @RequestBody @Valid CompleteSessionDto completeSessionDto
+    )
+    {
+        completeSessionService.complete(id,completeSessionDto);
+        return ResponseEntity.ok().build();
+    }
+
+
+    // - Advance endpoints (Admin)
+
+    @GetMapping
+    public ResponseEntity<List<SessionResponseDto>> findAll(){
+        List<SessionResponseDto> sessions = findAllSessionsService.findAll();
+        return  ResponseEntity.ok(sessions);
+    }
+
 }

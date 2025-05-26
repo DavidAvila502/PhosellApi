@@ -61,6 +61,8 @@ public class SecurityConfiguration {
                         .hasAnyRole(Role.CLIENT.toString(),Role.PHOTOGRAPHER.toString(),Role.ADMIN.toString())
                         .requestMatchers(HttpMethod.PATCH,"/api/v1/sessions/{id}/cancel")
                         .hasAnyRole(Role.ADMIN.toString(),Role.CLIENT.toString())
+                        .requestMatchers(HttpMethod.PATCH,"/api/sessions/{id}/complete")
+                        .hasAnyRole(Role.ADMIN.toString(),Role.PHOTOGRAPHER.toString())
 
                         // all other routes
                         .anyRequest()

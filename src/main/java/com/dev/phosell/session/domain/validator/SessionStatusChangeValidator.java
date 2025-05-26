@@ -16,6 +16,20 @@ public class SessionStatusChangeValidator {
         this.loadStatusesAndRoleRules();
     }
 
+    public void validatePhotographerAssignment(Session session, User authUser)
+    {
+        if(authUser.getRole().equals(Role.ADMIN)){
+            return;
+        }
+
+        if(!session.getPhotographer().getId().equals(authUser.getId()))
+        {
+            throw new SessionOwnershipException();
+
+        }
+
+    }
+
     public void validateOwnerShip(Session session, User authUser)
     {
         if(authUser.getRole().equals(Role.ADMIN)){
@@ -110,6 +124,13 @@ public class SessionStatusChangeValidator {
                         SessionStatus.IN_PROGRESS, SessionStatus.COMPLETED,
                         SessionStatus.CANCELLED_BY_ADMIN));
 
+        photosPendingMap.put(
+                Role.PHOTOGRAPHER,
+                EnumSet.of(
+                        SessionStatus.COMPLETED
+                )
+        );
+
         rules.put(SessionStatus.PHOTOS_PENDING,photosPendingMap);
 
         //completed rules
@@ -119,8 +140,31 @@ public class SessionStatusChangeValidator {
                 EnumSet.of(
                         SessionStatus.REQUESTED,SessionStatus.CONFIRMED,
                         SessionStatus.IN_PROGRESS, SessionStatus.PHOTOS_PENDING,
-                        SessionStatus.CANCELLED_BY_ADMIN));
+                        SessionStatus.COMPLETED, SessionStatus.CANCELLED_BY_ADMIN));
 
         rules.put(SessionStatus.COMPLETED,completedMap);
+
+        //Cancel by client rules
+        EnumMap<Role, EnumSet<SessionStatus>> cancelByClientMap = new EnumMap<>(Role.class);
+        cancelByClientMap.put(
+          Role.ADMIN,
+          EnumSet.of(SessionStatus.REQUESTED,SessionStatus.CONFIRMED,
+                  SessionStatus.IN_PROGRESS, SessionStatus.PHOTOS_PENDING,
+                  SessionStatus.COMPLETED,SessionStatus.CANCELLED_BY_ADMIN)
+        );
+
+        rules.put(SessionStatus.CANCELLED_BY_CLIENT,cancelByClientMap);
+
+        //Cancel by admin
+        EnumMap<Role, EnumSet<SessionStatus>> cancelByAdminMap = new EnumMap<>(Role.class);
+        cancelByAdminMap.put(
+                Role.ADMIN,
+                EnumSet.of(SessionStatus.REQUESTED,SessionStatus.CONFIRMED,
+                        SessionStatus.IN_PROGRESS, SessionStatus.PHOTOS_PENDING,
+                        SessionStatus.COMPLETED,SessionStatus.CANCELLED_BY_ADMIN)
+        );
+
+        rules.put(SessionStatus.CANCELLED_BY_ADMIN,cancelByAdminMap);
+
     }
 }

@@ -1,6 +1,6 @@
 package com.dev.phosell.session.domain.model;
 
-import com.dev.phosell.session.domain.exception.session.CancelSessionException;
+import com.dev.phosell.session.domain.exception.session.PermissionsSessionException;
 import com.dev.phosell.session.domain.exception.session.InvalidSessionValueException;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
 import com.dev.phosell.user.domain.model.Role;
@@ -55,10 +55,27 @@ public class Session {
         this.id = UUID.randomUUID();
     }
 
+    public void complete(User user, String photosLink)
+    {
+        if(photosLink == null || photosLink.isEmpty())
+        {
+            throw new InvalidSessionValueException("photosLink", photosLink);
+        }
+
+        if(user.getRole() != Role.ADMIN && user.getRole() != Role.PHOTOGRAPHER){
+            throw new PermissionsSessionException(user.getRole().toString(), "complete");
+        }
+
+        this.photosLink = photosLink;
+        this.sessionStatus = SessionStatus.COMPLETED;
+
+    }
+
+
     public void cancel(User user, String cancelReason)
     {
              if(user.getRole() != Role.ADMIN && user.getRole() != Role.CLIENT){
-                 throw new CancelSessionException(user.getRole().toString());
+                 throw new PermissionsSessionException(user.getRole().toString(),"Cancel");
              }
 
              if(user.getRole() == Role.ADMIN){
