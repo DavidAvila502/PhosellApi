@@ -1,10 +1,8 @@
 package com.dev.phosell.session.infrastructure.adapter.in;
 
+import com.dev.phosell.session.application.dto.SessionCancelDto;
 import com.dev.phosell.session.application.dto.SessionStatusChangeDto;
-import com.dev.phosell.session.application.service.ChangeSessionStatusService;
-import com.dev.phosell.session.application.service.FindAllSessionsService;
-import com.dev.phosell.session.application.service.GetAvailableSessionSlotsService;
-import com.dev.phosell.session.application.service.RegisterSessionService;
+import com.dev.phosell.session.application.service.*;
 import com.dev.phosell.session.application.dto.SessionInsertDto;
 import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
@@ -27,13 +25,15 @@ public class SessionController {
     public  final GetAvailableSessionSlotsService getAvailableSessionSlotsService;
     public final RegisterSessionService registerSessionService;
     public final ChangeSessionStatusService changeSessionStatusService;
+    public final CancelSessionService cancelSessionService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
             SessionMapper sessionMapper,
             GetAvailableSessionSlotsService getAvailableSessionSlotsService,
             RegisterSessionService registerSessionService,
-            ChangeSessionStatusService changeSessionStatusService
+            ChangeSessionStatusService changeSessionStatusService,
+            CancelSessionService cancelSessionService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -41,6 +41,7 @@ public class SessionController {
         this.getAvailableSessionSlotsService = getAvailableSessionSlotsService;
         this.registerSessionService = registerSessionService;
         this.changeSessionStatusService = changeSessionStatusService;
+        this.cancelSessionService = cancelSessionService;
     }
 
     @GetMapping
@@ -75,9 +76,19 @@ public class SessionController {
     @PutMapping("/{id}/status")
     public ResponseEntity<Void> changeSessionStatus(
             @PathVariable UUID id,
-            @RequestBody SessionStatusChangeDto statusChange)
+           @Valid @RequestBody SessionStatusChangeDto statusChange)
     {
         changeSessionStatusService.ChangeStatus(id, statusChange);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<Void> cancelSession(
+            @PathVariable UUID id,
+            @RequestBody SessionCancelDto sessionCancelDto
+    ){
+        cancelSessionService.cancel(id,sessionCancelDto);
 
         return ResponseEntity.ok().build();
     }

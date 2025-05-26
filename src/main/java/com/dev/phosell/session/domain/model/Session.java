@@ -1,10 +1,12 @@
 package com.dev.phosell.session.domain.model;
 
+import com.dev.phosell.session.domain.exception.session.CancelSessionException;
 import com.dev.phosell.session.domain.exception.session.InvalidSessionValueException;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
 import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ public class Session {
     private SessionStatus sessionStatus;
     private String photosLink;
     private String cancelReason;
+    private LocalDateTime cancelledAt;
 
     public Session(
             UUID id,
@@ -31,7 +34,8 @@ public class Session {
             String location,
             SessionStatus sessionStatus,
             String photosLink,
-            String cancelReason
+            String cancelReason,
+            LocalDateTime cancelledAt
     ) {
         this.id = id;
         this.client = client;
@@ -43,11 +47,33 @@ public class Session {
         this.sessionStatus = sessionStatus;
         this.photosLink = photosLink;
         this.cancelReason = cancelReason;
+        this.cancelledAt = cancelledAt;
     }
 
-    public Session(){
+    public Session()
+    {
         this.id = UUID.randomUUID();
     }
+
+    public void cancel(User user, String cancelReason)
+    {
+             if(user.getRole() != Role.ADMIN && user.getRole() != Role.CLIENT){
+                 throw new CancelSessionException(user.getRole().toString());
+             }
+
+             if(user.getRole() == Role.ADMIN){
+                 this.sessionStatus = SessionStatus.CANCELLED_BY_ADMIN;
+
+             }
+
+             if(user.getRole() == Role.CLIENT){
+                 this.sessionStatus = SessionStatus.CANCELLED_BY_CLIENT;
+             }
+
+             this.cancelledAt = LocalDateTime.now();
+             this.cancelReason = cancelReason;
+    }
+
     // validations
     public void validate(){
         validateId();
@@ -152,6 +178,10 @@ public class Session {
         return cancelReason;
     }
 
+    public LocalDateTime getCancelledAt() {
+        return cancelledAt;
+    }
+
     // setter
     public void setId(UUID id) {
         this.id = id;
@@ -191,5 +221,9 @@ public class Session {
 
     public void setCancelReason(String cancelReason) {
         this.cancelReason = cancelReason;
+    }
+
+    public void setCancelledAt(LocalDateTime cancelledAt) {
+        this.cancelledAt = cancelledAt;
     }
 }

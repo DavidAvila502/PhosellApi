@@ -6,6 +6,8 @@ import com.dev.phosell.sessionpackage.infrastructure.persistence.mapper.SessionP
 import com.dev.phosell.user.infrastructure.persistence.mapper.UserMapper;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+
 @Component
 public class SessionMapper {
     private final SessionPackageMapper sessionPackageMapper;
@@ -30,7 +32,8 @@ public class SessionMapper {
                 sessionEntity.getLocation(),
                 sessionEntity.getSessionStatus(),
                 sessionEntity.getPhotosLink(),
-                sessionEntity.getCancelReason()
+                sessionEntity.getCancelReason(),
+                sessionEntity.getCancelledAt() != null ? sessionEntity.getCancelledAt().toLocalDateTime() : null
         );
     }
 
@@ -45,7 +48,8 @@ public class SessionMapper {
                 session.getLocation(),
                 session.getSessionStatus(),
                 session.getPhotosLink(),
-                session.getCancelReason()
+                session.getCancelReason(),
+                session.getCancelledAt() != null ? Timestamp.valueOf(session.getCancelledAt()) : null
         );
     }
 

@@ -30,7 +30,8 @@ public class SessionEntity {
             String location,
             SessionStatus sessionStatus,
             String photosLink,
-            String cancelReason
+            String cancelReason,
+            Timestamp cancelledAt
     ) {
         this.id = id;
         this.client = client;
@@ -42,6 +43,7 @@ public class SessionEntity {
         this.sessionStatus = sessionStatus;
         this.photosLink = photosLink;
         this.cancelReason = cancelReason;
+        this.cancelledAt = cancelledAt;
     }
 
     @Id
