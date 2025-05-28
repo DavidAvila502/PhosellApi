@@ -17,5 +17,6 @@ public interface SessionPersistencePort {
     List<Session> findBySessionPackageId(UUID id);
     List<Session> findByDateAndStatusNotIn(LocalDate date, List<String> statuses);
     List<Session> findBySessionDateAndPhotographerIdWithStatuses(LocalDate date , UUID id,List<String> statuses);
-    Page<Session> findByFilters(UUID photographerId, LocalDate date, Pageable pageable);
+    Page<Session> findByFilters(
+            UUID photographerId,UUID clientId, LocalDate date, Pageable pageable);
 }

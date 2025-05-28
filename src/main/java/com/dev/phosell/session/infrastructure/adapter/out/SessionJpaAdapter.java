@@ -82,11 +82,12 @@ public class SessionJpaAdapter implements SessionPersistencePort {
     }
 
     @Override
-    public Page<Session> findByFilters(UUID photographerId, LocalDate date, Pageable pageable) {
+    public Page<Session> findByFilters(UUID photographerId,UUID clientId, LocalDate date, Pageable pageable) {
 
         Specification<SessionEntity> sessionSpecifications = Specification
                         .where(SessionSpecifications.byDate(date))
-                        .and(SessionSpecifications.byPhotographer(photographerId));
+                        .and(SessionSpecifications.byPhotographer(photographerId))
+                        .and(SessionSpecifications.byClient(clientId));
 
         return sessionJpaRepository
                 .findAll(sessionSpecifications,pageable)

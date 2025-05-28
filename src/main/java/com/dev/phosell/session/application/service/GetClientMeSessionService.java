@@ -11,33 +11,32 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 
 @Service
-public class GetPhotographerMeSessionService {
+public class GetClientMeSessionService {
+
     private final SessionPersistencePort sessionPersistencePort;
     private final SessionDtoMapper sessionDtoMapper;
 
-    public  GetPhotographerMeSessionService(
+    public GetClientMeSessionService(
             SessionPersistencePort sessionPersistencePort,
             SessionDtoMapper sessionDtoMapper
-    )
-    {
+    ){
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionDtoMapper = sessionDtoMapper;
     }
 
-    public Page<SessionResponseDto> getSessions(LocalDate date, Pageable pageable)
-    {
+    public Page<SessionResponseDto> getSessions( LocalDate date, Pageable pageable){
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         User authenticatedUser = customUserDetails.getUser();
 
         Page<Session> sessions = sessionPersistencePort
-                .findByFilters(authenticatedUser.getId(),null,date,pageable);
+                .findByFilters(null,authenticatedUser.getId(),date,pageable);
 
         return sessions.map(s-> sessionDtoMapper.toSessionResponseDto(s));
-
     }
-
 }

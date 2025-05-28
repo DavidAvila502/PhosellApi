@@ -27,6 +27,7 @@ public class SessionController {
     public final CancelSessionService cancelSessionService;
     public final CompleteSessionService completeSessionService;
     public final GetPhotographerMeSessionService getPhotographerMeSessionService;
+    public final GetClientMeSessionService getClientMeSessionService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -36,7 +37,8 @@ public class SessionController {
             ChangeSessionStatusService changeSessionStatusService,
             CancelSessionService cancelSessionService,
             CompleteSessionService completeSessionService,
-            GetPhotographerMeSessionService getPhotographerMeSessionService
+            GetPhotographerMeSessionService getPhotographerMeSessionService,
+            GetClientMeSessionService getClientMeSessionService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -47,6 +49,7 @@ public class SessionController {
         this.cancelSessionService = cancelSessionService;
         this.completeSessionService = completeSessionService;
         this.getPhotographerMeSessionService = getPhotographerMeSessionService;
+        this.getClientMeSessionService = getClientMeSessionService;
     }
 
     @GetMapping("/available-slots")
@@ -110,8 +113,16 @@ public class SessionController {
         return ResponseEntity.ok().body(sessions);
     }
 
-    //TODO CREATE /client/me (find all sessions of a client)
+    @GetMapping("/client/me")
+    public ResponseEntity<Page<SessionResponseDto>> clientSessionsMe(
+            Pageable pageable,
+            @RequestParam(required = false) LocalDate date
+    )
+    {
+        Page<SessionResponseDto> sessions = getClientMeSessionService.getSessions(date,pageable);
 
+        return  ResponseEntity.ok().body(sessions);
+    }
 
     // TODO: CREATE /id/ endpoint (find one session)
 

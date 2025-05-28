@@ -19,6 +19,17 @@ public class SessionSpecifications {
         };
     }
 
+    public static Specification<SessionEntity> byClient(UUID clientId)
+    {
+        return (root, query, cb) -> {
+            if(clientId == null){
+                return cb.conjunction();
+            }
+
+            return cb.equal(root.get("client").get("id"),clientId);
+        };
+    }
+
     public static Specification<SessionEntity> byDate(LocalDate date){
 
         return (root, query, cb) -> {
