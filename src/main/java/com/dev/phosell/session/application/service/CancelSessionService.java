@@ -5,6 +5,7 @@ import com.dev.phosell.session.application.dto.SessionCancelDto;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
+import com.dev.phosell.session.domain.validator.SessionAuthenticityValidator;
 import com.dev.phosell.session.domain.validator.SessionStatusChangeValidator;
 import com.dev.phosell.session.infrastructure.exception.SessionNotFoundException;
 import com.dev.phosell.user.domain.model.Role;
@@ -19,14 +20,17 @@ import java.util.UUID;
 public class CancelSessionService {
     private final SessionPersistencePort sessionPersistencePort;
     private final SessionStatusChangeValidator sessionStatusChangeValidator;
+    private final SessionAuthenticityValidator sessionAuthenticityValidator;
 
     public CancelSessionService(
             SessionPersistencePort sessionPersistencePort,
-            SessionStatusChangeValidator sessionStatusChangeValidator
+            SessionStatusChangeValidator sessionStatusChangeValidator,
+            SessionAuthenticityValidator sessionAuthenticityValidator
     )
     {
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionStatusChangeValidator = sessionStatusChangeValidator;
+        this.sessionAuthenticityValidator = sessionAuthenticityValidator;
     }
 
     public void cancel(UUID id, SessionCancelDto sessionCancelDto)
@@ -48,7 +52,7 @@ public class CancelSessionService {
                         newSessionStatus,
                         authenticatedUser.getRole());
 
-        sessionStatusChangeValidator.validateOwnerShip(session,authenticatedUser);
+        sessionAuthenticityValidator.validateOwnerShip(session,authenticatedUser);
 
 
         session.cancel(authenticatedUser,sessionCancelDto.getCancelReason());

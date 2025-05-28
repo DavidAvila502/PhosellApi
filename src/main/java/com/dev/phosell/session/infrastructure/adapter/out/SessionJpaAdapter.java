@@ -4,7 +4,12 @@ import com.dev.phosell.session.domain.port.SessionPersistencePort;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.infrastructure.persistence.jpa.entity.SessionEntity;
 import com.dev.phosell.session.infrastructure.persistence.jpa.repository.SessionJpaRepository;
+import com.dev.phosell.session.infrastructure.persistence.jpa.repository.SessionSpecifications;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
@@ -74,5 +79,17 @@ public class SessionJpaAdapter implements SessionPersistencePort {
     public List<Session> findBySessionDateAndPhotographerIdWithStatuses(LocalDate date, UUID id, List<String> statuses) {
         return sessionJpaRepository.findBySessionDateAndPhotographerIdWithStatuses(date,id, statuses).stream()
                 .map(s -> sessionMapper.toDomain(s)).toList();
+    }
+
+    @Override
+    public Page<Session> findByFilters(UUID photographerId, LocalDate date, Pageable pageable) {
+
+        Specification<SessionEntity> sessionSpecifications = Specification
+                        .where(SessionSpecifications.byDate(date))
+                        .and(SessionSpecifications.byPhotographer(photographerId));
+
+        return sessionJpaRepository
+                .findAll(sessionSpecifications,pageable)
+                .map(s->sessionMapper.toDomain(s));
     }
 }

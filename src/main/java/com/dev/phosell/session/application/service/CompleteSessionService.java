@@ -5,6 +5,7 @@ import com.dev.phosell.session.application.dto.CompleteSessionDto;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
+import com.dev.phosell.session.domain.validator.SessionAuthenticityValidator;
 import com.dev.phosell.session.domain.validator.SessionStatusChangeValidator;
 import com.dev.phosell.session.infrastructure.exception.SessionNotFoundException;
 import com.dev.phosell.user.domain.model.User;
@@ -18,14 +19,17 @@ public class CompleteSessionService {
 
     private final SessionPersistencePort sessionPersistencePort;
     private final SessionStatusChangeValidator sessionStatusChangeValidator;
+    private final SessionAuthenticityValidator sessionAuthenticityValidator;
 
     public CompleteSessionService(
             SessionPersistencePort sessionPersistencePort,
-            SessionStatusChangeValidator sessionStatusChangeValidator
+            SessionStatusChangeValidator sessionStatusChangeValidator,
+            SessionAuthenticityValidator sessionAuthenticityValidator
     )
     {
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionStatusChangeValidator = sessionStatusChangeValidator;
+        this.sessionAuthenticityValidator = sessionAuthenticityValidator;
     }
 
     public void complete(UUID id, CompleteSessionDto completeSessionDto)
@@ -43,7 +47,7 @@ public class CompleteSessionService {
                         SessionStatus.COMPLETED,
                         authenticatedUser.getRole());
 
-        sessionStatusChangeValidator.validatePhotographerAssignment(session,authenticatedUser);
+        sessionAuthenticityValidator.validatePhotographerAssignment(session,authenticatedUser);
 
         session.complete(authenticatedUser,completeSessionDto.getPhotosLink());
 

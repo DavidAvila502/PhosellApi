@@ -4,6 +4,8 @@ import com.dev.phosell.session.application.dto.*;
 import com.dev.phosell.session.application.service.*;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ public class SessionController {
     public final ChangeSessionStatusService changeSessionStatusService;
     public final CancelSessionService cancelSessionService;
     public final CompleteSessionService completeSessionService;
+    public final GetPhotographerMeSessionService getPhotographerMeSessionService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -32,7 +35,8 @@ public class SessionController {
             RegisterSessionService registerSessionService,
             ChangeSessionStatusService changeSessionStatusService,
             CancelSessionService cancelSessionService,
-            CompleteSessionService completeSessionService
+            CompleteSessionService completeSessionService,
+            GetPhotographerMeSessionService getPhotographerMeSessionService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -42,6 +46,7 @@ public class SessionController {
         this.changeSessionStatusService = changeSessionStatusService;
         this.cancelSessionService = cancelSessionService;
         this.completeSessionService = completeSessionService;
+        this.getPhotographerMeSessionService = getPhotographerMeSessionService;
     }
 
     @GetMapping("/available-slots")
@@ -95,6 +100,22 @@ public class SessionController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/photographer/me")
+    public ResponseEntity<Page<SessionResponseDto>> photographerSessionsMe(
+            Pageable pageable,
+            @RequestParam(required = false) LocalDate date
+    )
+    {
+        Page<SessionResponseDto> sessions = getPhotographerMeSessionService.getSessions(date,pageable);
+        return ResponseEntity.ok().body(sessions);
+    }
+
+    //TODO CREATE /client/me (find all sessions of a client)
+
+
+    // TODO: CREATE /id/ endpoint (find one session)
+
+
 
     // - Advance endpoints (Admin)
 
@@ -103,5 +124,7 @@ public class SessionController {
         List<SessionResponseDto> sessions = findAllSessionsService.findAll();
         return  ResponseEntity.ok(sessions);
     }
+
+    //TODO: Create /user/id/ endpoint (fin all sessions of a user) -admin exclusive
 
 }

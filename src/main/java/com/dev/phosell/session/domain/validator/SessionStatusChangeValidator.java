@@ -1,10 +1,7 @@
 package com.dev.phosell.session.domain.validator;
 
-import com.dev.phosell.session.domain.exception.session.SessionOwnershipException;
-import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.user.domain.model.Role;
-import com.dev.phosell.user.domain.model.User;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import java.util.*;
 
@@ -14,31 +11,6 @@ public class SessionStatusChangeValidator {
 
     public SessionStatusChangeValidator(){
         this.loadStatusesAndRoleRules();
-    }
-
-    public void validatePhotographerAssignment(Session session, User authUser)
-    {
-        if(authUser.getRole().equals(Role.ADMIN)){
-            return;
-        }
-
-        if(!session.getPhotographer().getId().equals(authUser.getId()))
-        {
-            throw new SessionOwnershipException();
-
-        }
-
-    }
-
-    public void validateOwnerShip(Session session, User authUser)
-    {
-        if(authUser.getRole().equals(Role.ADMIN)){
-            return;
-        }
-
-        if(!session.getClient().getId().equals(authUser.getId())){
-            throw new SessionOwnershipException();
-        }
     }
 
     public void validateStatusAndRolePermissions(SessionStatus currentStatus, SessionStatus newStatus,Role userRole){
