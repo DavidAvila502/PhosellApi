@@ -66,6 +66,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/v1/sessions/photographer/me").hasRole(Role.PHOTOGRAPHER.toString())
                         .requestMatchers(HttpMethod.GET,"/api/v1/sessions/{id}")
                         .hasAnyRole(Role.ADMIN.toString(),Role.CLIENT.toString(),Role.PHOTOGRAPHER.toString())
+                        .requestMatchers(HttpMethod.GET,"/api/v1/sessions/user/{id}").hasRole(Role.ADMIN.toString())
 
                         // all other routes
                         .anyRequest()

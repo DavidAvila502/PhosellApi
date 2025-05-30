@@ -29,6 +29,7 @@ public class SessionController {
     public final GetPhotographerMeSessionService getPhotographerMeSessionService;
     public final GetClientMeSessionService getClientMeSessionService;
     private final FindSessionByIdService findSessionByIdService;
+    private final FindSessionsByUserId findSessionsByUserId;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -40,7 +41,8 @@ public class SessionController {
             CompleteSessionService completeSessionService,
             GetPhotographerMeSessionService getPhotographerMeSessionService,
             GetClientMeSessionService getClientMeSessionService,
-            FindSessionByIdService findSessionByIdService
+            FindSessionByIdService findSessionByIdService,
+            FindSessionsByUserId findSessionsByUserId
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -53,6 +55,7 @@ public class SessionController {
         this.getPhotographerMeSessionService = getPhotographerMeSessionService;
         this.getClientMeSessionService = getClientMeSessionService;
         this.findSessionByIdService = findSessionByIdService;
+        this.findSessionsByUserId = findSessionsByUserId;
     }
 
     @GetMapping("/available-slots")
@@ -145,6 +148,12 @@ public class SessionController {
         return  ResponseEntity.ok(sessions);
     }
 
-    //TODO: Create /user/id/ endpoint (fin all sessions of a user) -admin exclusive
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<SessionResponseDto>> findByUser(
+        @PathVariable UUID id
+    ){
+        List<SessionResponseDto> sessions = findSessionsByUserId.findSessions(id);
+        return ResponseEntity.ok().body(sessions);
+    }
 
 }
