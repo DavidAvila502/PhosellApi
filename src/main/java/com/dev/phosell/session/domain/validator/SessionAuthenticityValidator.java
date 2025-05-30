@@ -11,29 +11,39 @@ public class SessionAuthenticityValidator {
 
     public  SessionAuthenticityValidator(){}
 
-    public void validatePhotographerAssignment(Session session, User authUser)
+    /**
+     * Compare user with photographer in session
+     *
+     * @param session session object to compare.
+     * @param user user object to compare.
+     * */
+    public void validatePhotographerAssignment(Session session, User user)
     {
-        if(authUser.getRole().equals(Role.ADMIN)){
+        if(user.getRole().equals(Role.ADMIN)){
             return;
         }
 
-        if(!session.getPhotographer().getId().equals(authUser.getId()))
+        if(!session.getPhotographer().getId().equals(user.getId()))
         {
             throw new SessionOwnershipException();
 
         }
 
     }
-
-    public void validateOwnerShip(Session session, User authUser)
+    /**
+     *  Compare user with client in session
+     *
+     * @param session session object to compare.
+     * @param user user object to compare.
+     * */
+    public void validateOwnerShip(Session session, User user)
     {
-        if(authUser.getRole().equals(Role.ADMIN)){
+        if(user.getRole().equals(Role.ADMIN)){
             return;
         }
 
-        if(!session.getClient().getId().equals(authUser.getId())){
+        if(!session.getClient().getId().equals(user.getId())){
             throw new SessionOwnershipException();
         }
     }
-
 }

@@ -28,6 +28,7 @@ public class SessionController {
     public final CompleteSessionService completeSessionService;
     public final GetPhotographerMeSessionService getPhotographerMeSessionService;
     public final GetClientMeSessionService getClientMeSessionService;
+    private final FindSessionByIdService findSessionByIdService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -38,7 +39,8 @@ public class SessionController {
             CancelSessionService cancelSessionService,
             CompleteSessionService completeSessionService,
             GetPhotographerMeSessionService getPhotographerMeSessionService,
-            GetClientMeSessionService getClientMeSessionService
+            GetClientMeSessionService getClientMeSessionService,
+            FindSessionByIdService findSessionByIdService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -50,6 +52,7 @@ public class SessionController {
         this.completeSessionService = completeSessionService;
         this.getPhotographerMeSessionService = getPhotographerMeSessionService;
         this.getClientMeSessionService = getClientMeSessionService;
+        this.findSessionByIdService = findSessionByIdService;
     }
 
     @GetMapping("/available-slots")
@@ -124,8 +127,14 @@ public class SessionController {
         return  ResponseEntity.ok().body(sessions);
     }
 
-    // TODO: CREATE /id/ endpoint (find one session)
+    @GetMapping("/{id}")
+    public ResponseEntity<SessionResponseDto> findSessionById(
+            @PathVariable UUID id
+    ){
+        SessionResponseDto response = findSessionByIdService.findSession(id);
 
+        return ResponseEntity.ok().body(response);
+    };
 
 
     // - Advance endpoints (Admin)
