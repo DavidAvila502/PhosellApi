@@ -143,17 +143,21 @@ public class SessionController {
     // - Advance endpoints (Admin)
 
     @GetMapping
-    public ResponseEntity<List<SessionResponseDto>> findAll(){
-        List<SessionResponseDto> sessions = findAllSessionsService.findAll();
+    public ResponseEntity<Page<SessionResponseDto>> findAll(
+        @ModelAttribute SessionFilterDto sessionFilterDto,
+        Pageable pageable
+    ){
+        Page<SessionResponseDto> sessions = findAllSessionsService.findAll(sessionFilterDto,pageable);
+
         return  ResponseEntity.ok(sessions);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<List<SessionResponseDto>> findByUser(
-        @PathVariable UUID id
-    ){
-        List<SessionResponseDto> sessions = findSessionsByUserId.findSessions(id);
-        return ResponseEntity.ok().body(sessions);
-    }
+//    @GetMapping("/user/{id}")
+//    public ResponseEntity<List<SessionResponseDto>> findByUser(
+//        @PathVariable UUID id
+//    ){
+//        List<SessionResponseDto> sessions = findSessionsByUserId.findSessions(id);
+//        return ResponseEntity.ok().body(sessions);
+//    }
 
 }
