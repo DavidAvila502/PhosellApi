@@ -1,10 +1,15 @@
 package com.dev.phosell.session.application.service;
+
+import com.dev.phosell.session.application.dto.SessionFilterDto;
 import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.util.UUID;
 
-import java.util.List;
 
 @Service
 public class FindAllSessionsService {
@@ -15,8 +20,14 @@ public class FindAllSessionsService {
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionDtoMapper = sessionDtoMapper;
     }
-    public List<SessionResponseDto> findAll(){
-        return sessionPersistencePort.findAll().stream()
-                .map(s -> sessionDtoMapper.toSessionResponseDto(s)).toList();
+    public Page<SessionResponseDto> findAll(SessionFilterDto sessionFilterDto, Pageable pageable){
+
+        UUID clientId = sessionFilterDto.getClientId();
+        UUID photographerId = sessionFilterDto.getPhotographerId();
+        LocalDate date = sessionFilterDto.getDate();
+
+        return sessionPersistencePort
+                .findByFilters(photographerId,clientId,date,pageable)
+                .map(session -> sessionDtoMapper.toSessionResponseDto(session));
     }
 }

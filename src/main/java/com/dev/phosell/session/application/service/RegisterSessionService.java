@@ -1,6 +1,5 @@
 package com.dev.phosell.session.application.service;
 
-import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.application.validator.RegisterSessionValidator;
@@ -14,9 +13,6 @@ import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
 import com.dev.phosell.user.domain.port.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
-import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -54,14 +50,6 @@ public class RegisterSessionService {
     public SessionResponseDto RegisterSession(SessionInsertDto sessionInsert){
 
         User client = registerSessionValidator.validateClient(sessionInsert.getClientId());
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        if(!userDetails.getUser().getId().equals(client.getId())){
-            throw new AuthorizationDeniedException("Unauthorized action");
-        }
 
         SessionPackage sessionPackage = registerSessionValidator.validateSessionPackage(sessionInsert.getSessionPackageId());
 
