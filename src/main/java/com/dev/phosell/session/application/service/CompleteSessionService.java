@@ -1,6 +1,5 @@
 package com.dev.phosell.session.application.service;
 
-import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.session.application.dto.CompleteSessionDto;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
@@ -9,8 +8,6 @@ import com.dev.phosell.session.domain.validator.SessionAuthenticityValidator;
 import com.dev.phosell.session.domain.validator.SessionStatusChangeValidator;
 import com.dev.phosell.session.infrastructure.exception.SessionNotFoundException;
 import com.dev.phosell.user.domain.model.User;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
@@ -32,14 +29,10 @@ public class CompleteSessionService {
         this.sessionAuthenticityValidator = sessionAuthenticityValidator;
     }
 
-    public void complete(UUID id, CompleteSessionDto completeSessionDto)
+    public void complete(UUID id, CompleteSessionDto completeSessionDto,User authenticatedUser)
     {
         Session session = sessionPersistencePort.findById(id)
                 .orElseThrow(() -> new SessionNotFoundException("id",id.toString()));
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        User authenticatedUser = customUserDetails.getUser();
 
         sessionStatusChangeValidator
                 .validateStatusAndRolePermissions(

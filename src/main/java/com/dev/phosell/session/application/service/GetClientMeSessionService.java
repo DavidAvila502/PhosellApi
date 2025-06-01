@@ -28,11 +28,7 @@ public class GetClientMeSessionService {
         this.sessionDtoMapper = sessionDtoMapper;
     }
 
-    public Page<SessionResponseDto> getSessions( LocalDate date, Pageable pageable){
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        User authenticatedUser = customUserDetails.getUser();
+    public Page<SessionResponseDto> getSessions( LocalDate date, Pageable pageable,User authenticatedUser){
 
         Page<Session> sessions = sessionPersistencePort
                 .findByFilters(null,authenticatedUser.getId(),date,pageable);

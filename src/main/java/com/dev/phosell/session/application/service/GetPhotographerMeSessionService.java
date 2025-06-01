@@ -27,12 +27,8 @@ public class GetPhotographerMeSessionService {
         this.sessionDtoMapper = sessionDtoMapper;
     }
 
-    public Page<SessionResponseDto> getSessions(LocalDate date, Pageable pageable)
+    public Page<SessionResponseDto> getSessions(LocalDate date, Pageable pageable,User authenticatedUser)
     {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        User authenticatedUser = customUserDetails.getUser();
-
         Page<Session> sessions = sessionPersistencePort
                 .findByFilters(authenticatedUser.getId(),null,date,pageable);
 

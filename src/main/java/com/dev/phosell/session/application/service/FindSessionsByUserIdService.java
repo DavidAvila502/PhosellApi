@@ -36,14 +36,6 @@ public class FindSessionsByUserIdService {
 
     public List<SessionResponseDto> findSessions(UUID userId){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        User authenticadedUser = customUserDetails.getUser();
-
-        if(authenticadedUser.getRole() != Role.ADMIN){
-            throw new AuthorizationDeniedException("Authorization denied");
-        }
-
         User user =  findUserByIdPort.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("id",userId.toString()));
 
