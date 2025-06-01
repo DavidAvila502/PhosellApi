@@ -1,11 +1,13 @@
 package com.dev.phosell.session.infrastructure.adapter.in;
 
+import com.dev.phosell.authentication.application.dto.LoginResponseDto;
 import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.session.application.dto.*;
 import com.dev.phosell.session.application.service.*;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import com.dev.phosell.user.domain.model.Role;
 import com.dev.phosell.user.domain.model.User;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -96,11 +98,12 @@ public class SessionController {
     }
 
     @PostMapping("/registrations")
-    public ResponseEntity<SessionResponseDto> saveUserAndSession(
-            @RequestBody @Valid SessionAndClientInsertDto dto
+    public ResponseEntity<LoginResponseDto> saveUserAndSession(
+            @RequestBody @Valid SessionAndClientInsertDto dto,
+            HttpServletResponse response
     ){
-        SessionResponseDto sessionResponse = registerSessionAndClientService.registerSessionAndClient(dto);
-        return ResponseEntity.ok().body(sessionResponse);
+        LoginResponseDto loginResponse = registerSessionAndClientService.registerSessionAndClient(dto,response);
+        return ResponseEntity.ok().body(loginResponse);
     }
 
     @PutMapping("/{id}/status")
