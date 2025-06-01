@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -51,11 +53,26 @@ public class SecurityConfiguration {
                         .requestMatchers( "/api/v1/photographers/**").hasRole(Role.PHOTOGRAPHER.toString())
 
                         // session route
-                        .requestMatchers("/api/v1/sessions/**").permitAll()
+                        //.requestMatchers("/api/v1/sessions/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/sessions").hasRole(Role.ADMIN.toString())
+                        .requestMatchers(HttpMethod.GET,"/api/v1/sessions/available-slots").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/sessions").hasRole(Role.CLIENT.toString())
+                        .requestMatchers(HttpMethod.PUT,"/api/v1/sessions/{id}/status")
+                        .hasAnyRole(Role.CLIENT.toString(),Role.PHOTOGRAPHER.toString(),Role.ADMIN.toString())
+                        .requestMatchers(HttpMethod.PATCH,"/api/v1/sessions/{id}/cancel")
+                        .hasAnyRole(Role.ADMIN.toString(),Role.CLIENT.toString())
+                        .requestMatchers(HttpMethod.PATCH,"/api/sessions/{id}/complete")
+                        .hasAnyRole(Role.ADMIN.toString(),Role.PHOTOGRAPHER.toString())
+                        .requestMatchers(HttpMethod.GET,"/api/v1/sessions/photographer/me").hasRole(Role.PHOTOGRAPHER.toString())
+                        .requestMatchers(HttpMethod.GET,"/api/v1/sessions/{id}")
+                        .hasAnyRole(Role.ADMIN.toString(),Role.CLIENT.toString(),Role.PHOTOGRAPHER.toString())
+                        .requestMatchers(HttpMethod.GET,"/api/v1/sessions/user/{id}").hasRole(Role.ADMIN.toString())
+                        .requestMatchers(HttpMethod.POST,"/api/v1/sessions/registrations").permitAll()
 
                         // all other routes
                         .anyRequest()
-                        .authenticated())
+                        .authenticated()
+                )
                 .sessionManagement(sess -> sess
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

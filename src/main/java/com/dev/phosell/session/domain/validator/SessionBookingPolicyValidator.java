@@ -42,7 +42,7 @@ public class SessionBookingPolicyValidator {
 
         if (date.isBefore(today))
         {
-            throw new InvalidSessionDateException();
+            throw new InvalidSessionDateException(date.toString(),"the date is in the past");
         }
 
         if(date.equals(today))
@@ -58,7 +58,7 @@ public class SessionBookingPolicyValidator {
     private void validateForToday (LocalDate today,LocalDateTime now,LocalDateTime slot)
     {
         if (slot.isBefore(now)) {
-            throw new InvalidSessionSlotException();
+            throw new InvalidSessionSlotException(slot.toString(),"the slot is before now");
         }
 
         LocalDateTime earliestBooking = today.atTime(earliestBookingHour, 0);

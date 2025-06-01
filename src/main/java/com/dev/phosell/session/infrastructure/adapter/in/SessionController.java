@@ -1,23 +1,25 @@
 package com.dev.phosell.session.infrastructure.adapter.in;
 
-import com.dev.phosell.session.application.service.FindAllSessionsService;
-import com.dev.phosell.session.application.service.GetAvailableSessionSlotsService;
-import com.dev.phosell.session.application.service.RegisterSessionService;
-import com.dev.phosell.session.application.dto.SessionInsertDto;
-import com.dev.phosell.session.application.dto.SessionResponseDto;
+import com.dev.phosell.authentication.application.dto.LoginResponseDto;
+import com.dev.phosell.authentication.domain.port.CurrentUserPort;
+import com.dev.phosell.session.application.dto.*;
+import com.dev.phosell.session.application.service.*;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
-import jakarta.annotation.security.PermitAll;
+import com.dev.phosell.user.domain.model.User;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/sessions")
@@ -26,30 +28,44 @@ public class SessionController {
     public final SessionMapper sessionMapper;
     public  final GetAvailableSessionSlotsService getAvailableSessionSlotsService;
     public final RegisterSessionService registerSessionService;
-
+    public final ChangeSessionStatusService changeSessionStatusService;
+    public final CancelSessionService cancelSessionService;
+    public final CompleteSessionService completeSessionService;
+    public final GetPhotographerMeSessionService getPhotographerMeSessionService;
+    public final GetClientMeSessionService getClientMeSessionService;
+    private final FindSessionByIdService findSessionByIdService;
+    private final RegisterSessionAndClientService registerSessionAndClientService;
+    private final CurrentUserPort currentUserPort;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
             SessionMapper sessionMapper,
             GetAvailableSessionSlotsService getAvailableSessionSlotsService,
-            RegisterSessionService registerSessionService
+            RegisterSessionService registerSessionService,
+            ChangeSessionStatusService changeSessionStatusService,
+            CancelSessionService cancelSessionService,
+            CompleteSessionService completeSessionService,
+            GetPhotographerMeSessionService getPhotographerMeSessionService,
+            GetClientMeSessionService getClientMeSessionService,
+            FindSessionByIdService findSessionByIdService,
+            RegisterSessionAndClientService registerSessionAndClientService,
+            CurrentUserPort currentUserPort
     )
     {
         this.findAllSessionsService = findAllSessionsService;
         this.sessionMapper = sessionMapper;
         this.getAvailableSessionSlotsService = getAvailableSessionSlotsService;
         this.registerSessionService = registerSessionService;
+        this.changeSessionStatusService = changeSessionStatusService;
+        this.cancelSessionService = cancelSessionService;
+        this.completeSessionService = completeSessionService;
+        this.getPhotographerMeSessionService = getPhotographerMeSessionService;
+        this.getClientMeSessionService = getClientMeSessionService;
+        this.findSessionByIdService = findSessionByIdService;
+        this.registerSessionAndClientService = registerSessionAndClientService;
+        this.currentUserPort = currentUserPort;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
-    public ResponseEntity<List<SessionResponseDto>> findAll(){
-        List<SessionResponseDto> sessions = findAllSessionsService.findAll();
-        return  ResponseEntity.ok(sessions);
-    }
-
-
-    @PermitAll
     @GetMapping("/available-slots")
     public ResponseEntity<List<LocalTime>> getAvailableSlots(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date)
@@ -57,10 +73,17 @@ public class SessionController {
         return ResponseEntity.ok(getAvailableSessionSlotsService.getAvailableSlots(date));
     }
 
-
-    @PreAuthorize("hasRole('CLIENT')")
     @PostMapping
-    public ResponseEntity<SessionResponseDto> saveSession(@Valid @RequestBody SessionInsertDto sessionInsert){
+    public ResponseEntity<SessionResponseDto> saveSession(
+            @Valid @RequestBody SessionInsertDto sessionInsert
+    ){
+
+        User authenticatedUser = currentUserPort.getAuthenticatedUser();
+
+        if(!authenticatedUser.getId().equals(sessionInsert.getClientId()))
+        {
+            throw new AuthorizationDeniedException("Unauthorized action");
+        }
 
         SessionResponseDto savedSession = registerSessionService.RegisterSession(sessionInsert);
 
@@ -73,4 +96,93 @@ public class SessionController {
         return ResponseEntity.created(location).body(savedSession);
     }
 
+    @PostMapping("/registrations")
+    public ResponseEntity<LoginResponseDto> saveUserAndSession(
+            @RequestBody @Valid SessionAndClientInsertDto dto,
+            HttpServletResponse response
+    ){
+        LoginResponseDto loginResponse = registerSessionAndClientService.registerSessionAndClient(dto,response);
+        return ResponseEntity.ok().body(loginResponse);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> changeSessionStatus(
+            @PathVariable UUID id,
+           @Valid @RequestBody SessionStatusChangeDto statusChange)
+    {
+        User authenticatedUser = currentUserPort.getAuthenticatedUser();
+
+        changeSessionStatusService.ChangeStatus(id, statusChange,authenticatedUser);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<Void> cancelSession(
+            @PathVariable UUID id,
+            @RequestBody SessionCancelDto sessionCancelDto
+    ){
+        User authenticatedUser = currentUserPort.getAuthenticatedUser();
+
+        cancelSessionService.cancel(id,sessionCancelDto,authenticatedUser);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<Void> uploadPhotosLink(
+            @PathVariable UUID id,
+            @RequestBody @Valid CompleteSessionDto completeSessionDto
+    )
+    {
+        User authenticatedUser = currentUserPort.getAuthenticatedUser();
+        completeSessionService.complete(id,completeSessionDto,authenticatedUser);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/photographer/me")
+    public ResponseEntity<Page<SessionResponseDto>> photographerSessionsMe(
+            Pageable pageable,
+            @RequestParam(required = false) LocalDate date
+    )
+    {
+        User authenticatedUser = currentUserPort.getAuthenticatedUser();
+        Page<SessionResponseDto> sessions = getPhotographerMeSessionService.getSessions(date,pageable,authenticatedUser);
+        return ResponseEntity.ok().body(sessions);
+    }
+
+    @GetMapping("/client/me")
+    public ResponseEntity<Page<SessionResponseDto>> clientSessionsMe(
+            Pageable pageable,
+            @RequestParam(required = false) LocalDate date
+    )
+    {
+        User authenticatedUser = currentUserPort.getAuthenticatedUser();
+        Page<SessionResponseDto> sessions = getClientMeSessionService.getSessions(date,pageable,authenticatedUser);
+
+        return  ResponseEntity.ok().body(sessions);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SessionResponseDto> findSessionById(
+            @PathVariable UUID id
+    ){
+        User authenticatedUser = currentUserPort.getAuthenticatedUser();
+        SessionResponseDto response = findSessionByIdService.findSession(id,authenticatedUser);
+
+        return ResponseEntity.ok().body(response);
+    };
+
+
+    // - Advance endpoints (Admin)
+
+    @GetMapping
+    public ResponseEntity<Page<SessionResponseDto>> findAll(
+        @ModelAttribute SessionFilterDto sessionFilterDto,
+        Pageable pageable
+    ){
+        Page<SessionResponseDto> sessions = findAllSessionsService.findAll(sessionFilterDto,pageable);
+
+        return  ResponseEntity.ok(sessions);
+    }
 }
