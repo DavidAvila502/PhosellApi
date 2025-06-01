@@ -1,13 +1,18 @@
 package com.dev.phosell.session.infrastructure.adapter.in;
 
+import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.session.application.dto.*;
 import com.dev.phosell.session.application.service.*;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
+import com.dev.phosell.user.domain.model.Role;
+import com.dev.phosell.user.domain.model.User;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
@@ -29,7 +34,7 @@ public class SessionController {
     public final GetPhotographerMeSessionService getPhotographerMeSessionService;
     public final GetClientMeSessionService getClientMeSessionService;
     private final FindSessionByIdService findSessionByIdService;
-    private final FindSessionsByUserId findSessionsByUserId;
+    private final RegisterSessionAndClientService registerSessionAndClientService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -42,7 +47,7 @@ public class SessionController {
             GetPhotographerMeSessionService getPhotographerMeSessionService,
             GetClientMeSessionService getClientMeSessionService,
             FindSessionByIdService findSessionByIdService,
-            FindSessionsByUserId findSessionsByUserId
+            RegisterSessionAndClientService registerSessionAndClientService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -55,7 +60,7 @@ public class SessionController {
         this.getPhotographerMeSessionService = getPhotographerMeSessionService;
         this.getClientMeSessionService = getClientMeSessionService;
         this.findSessionByIdService = findSessionByIdService;
-        this.findSessionsByUserId = findSessionsByUserId;
+        this.registerSessionAndClientService = registerSessionAndClientService;
     }
 
     @GetMapping("/available-slots")
@@ -66,7 +71,18 @@ public class SessionController {
     }
 
     @PostMapping
-    public ResponseEntity<SessionResponseDto> saveSession(@Valid @RequestBody SessionInsertDto sessionInsert){
+    public ResponseEntity<SessionResponseDto> saveSession(
+            @Valid @RequestBody SessionInsertDto sessionInsert,
+            Authentication authentication
+    ){
+
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        User authenticatedUser = customUserDetails.getUser();
+        if(!authenticatedUser.getId().equals(sessionInsert.getClientId())
+                || authenticatedUser.getRole() != Role.CLIENT)
+        {
+            throw new AuthorizationDeniedException("Unauthorized action");
+        }
 
         SessionResponseDto savedSession = registerSessionService.RegisterSession(sessionInsert);
 
@@ -77,6 +93,14 @@ public class SessionController {
                 .toUri();
 
         return ResponseEntity.created(location).body(savedSession);
+    }
+
+    @PostMapping("/registrations")
+    public ResponseEntity<SessionResponseDto> saveUserAndSession(
+            @RequestBody @Valid SessionAndClientInsertDto dto
+    ){
+        SessionResponseDto sessionResponse = registerSessionAndClientService.registerSessionAndClient(dto);
+        return ResponseEntity.ok().body(sessionResponse);
     }
 
     @PutMapping("/{id}/status")
@@ -151,13 +175,4 @@ public class SessionController {
 
         return  ResponseEntity.ok(sessions);
     }
-
-//    @GetMapping("/user/{id}")
-//    public ResponseEntity<List<SessionResponseDto>> findByUser(
-//        @PathVariable UUID id
-//    ){
-//        List<SessionResponseDto> sessions = findSessionsByUserId.findSessions(id);
-//        return ResponseEntity.ok().body(sessions);
-//    }
-
 }

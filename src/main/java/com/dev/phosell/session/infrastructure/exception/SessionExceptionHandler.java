@@ -5,6 +5,7 @@ import com.dev.phosell.session.domain.exception.session.InvalidSessionValueExcep
 import com.dev.phosell.session.domain.exception.slot.*;
 import com.dev.phosell.session.infrastructure.adapter.in.SessionController;
 import com.dev.phosell.sessionpackage.application.exception.SessionPackageNotFoundExcaption;
+import com.dev.phosell.user.application.exception.UserExistsException;
 import com.dev.phosell.user.application.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -141,6 +142,20 @@ public class SessionExceptionHandler {
         detail.setProperty("code", "USER_NOT_FOUND");
 
         return new ResponseEntity<>(detail, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserExistsException.class)
+    public ResponseEntity<ProblemDetail> handleUserExist(
+            UserExistsException ex, WebRequest request){
+
+        ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        detail.setTitle("User Already Exist");
+        detail.setDetail(ex.getMessage());
+        detail.setProperty("timestamp", LocalDateTime.now());
+        detail.setProperty("path", ((ServletWebRequest) request).getRequest().getRequestURI());
+        detail.setProperty("code", "USER_ALREADY_EXIST");
+
+        return new ResponseEntity<>(detail, new HttpHeaders(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(SessionPackageNotFoundExcaption.class)

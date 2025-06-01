@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class FindSessionsByUserId {
+public class FindSessionsByUserIdService {
     private final SessionPersistencePort sessionPersistencePort;
     private final FindUserByIdPort findUserByIdPort;
     private final SessionDtoMapper sessionDtoMapper;
 
-    public  FindSessionsByUserId(
+    public FindSessionsByUserIdService(
             SessionPersistencePort sessionPersistencePort,
             FindUserByIdPort findUserByIdPort,
             SessionDtoMapper sessionDtoMapper
