@@ -49,6 +49,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh","/api/v1/auth/logout")
                         .authenticated()
 
+                        //packages route
+                        .requestMatchers(HttpMethod.GET,"/api/v1/packages")
+                        .permitAll()
+
                         //client route
                         .requestMatchers( "/api/v1/clients/**").hasRole(Role.CLIENT.toString())
 
