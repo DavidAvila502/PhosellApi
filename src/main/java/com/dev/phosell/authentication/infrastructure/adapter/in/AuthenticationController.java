@@ -2,8 +2,8 @@ package com.dev.phosell.authentication.infrastructure.adapter.in;
 
 import com.dev.phosell.authentication.application.dto.*;
 import com.dev.phosell.authentication.application.service.*;
-import com.dev.phosell.authentication.application.mapper.AuthUserDtoMapper;
-import com.dev.phosell.authentication.infrastructure.security.JwtService;
+import com.dev.phosell.authentication.infrastructure.security.RefreshTokenCookieService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +19,20 @@ public class AuthenticationController {
     private final RegisterClientService registerClientService;
     private  final GetRefreshAccessTokenService getRefreshAccessTokenService;
     private  final LogoutService logoutService;
+    private final RefreshTokenCookieService refreshTokenCookieService;
 
     public AuthenticationController(
             LoginService loginService,
-            AuthUserDtoMapper authUserDtoMapper,
             RegisterClientService registerClientService,
             GetRefreshAccessTokenService getRefreshAccessTokenService,
-            JwtService jwtService,
-            LogoutService logoutService
+            LogoutService logoutService,
+            RefreshTokenCookieService refreshTokenCookieService
     ){
     this.loginService = loginService;
     this.registerClientService = registerClientService;
     this.getRefreshAccessTokenService = getRefreshAccessTokenService;
     this.logoutService = logoutService;
+    this.refreshTokenCookieService = refreshTokenCookieService;
     }
 
     @PostMapping("/login")
@@ -39,7 +40,18 @@ public class AuthenticationController {
             @RequestBody @Valid LoginUserDto loginUser,
             HttpServletResponse response)
     {
-        LoginResponseDto loginResponse = loginService.login(loginUser,response);
+        LoginTokensGeneratedDto loginTokens = loginService.login(loginUser);
+
+        Cookie refreshTokenCookie = refreshTokenCookieService.
+                generateCookie(loginTokens.getRefreshToken().getToken(),"/api/auth/refresh");
+
+        response.addCookie(refreshTokenCookie);
+
+        LoginResponseDto loginResponse = new LoginResponseDto(
+                loginTokens.getUserName(),
+                loginTokens.getAccessToken(),
+                loginTokens.getAccessTokenExpiresIn());
+
         return  ResponseEntity.ok(loginResponse);
     }
 

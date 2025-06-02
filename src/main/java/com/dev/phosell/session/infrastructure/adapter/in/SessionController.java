@@ -1,11 +1,14 @@
 package com.dev.phosell.session.infrastructure.adapter.in;
 
 import com.dev.phosell.authentication.application.dto.LoginResponseDto;
+import com.dev.phosell.authentication.application.dto.LoginTokensGeneratedDto;
 import com.dev.phosell.authentication.domain.port.CurrentUserPort;
+import com.dev.phosell.authentication.infrastructure.security.RefreshTokenCookieService;
 import com.dev.phosell.session.application.dto.*;
 import com.dev.phosell.session.application.service.*;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import com.dev.phosell.user.domain.model.User;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,7 @@ public class SessionController {
     private final FindSessionByIdService findSessionByIdService;
     private final RegisterSessionAndClientService registerSessionAndClientService;
     private final CurrentUserPort currentUserPort;
+    private final RefreshTokenCookieService refreshTokenCookieService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -49,7 +53,8 @@ public class SessionController {
             GetClientMeSessionService getClientMeSessionService,
             FindSessionByIdService findSessionByIdService,
             RegisterSessionAndClientService registerSessionAndClientService,
-            CurrentUserPort currentUserPort
+            CurrentUserPort currentUserPort,
+            RefreshTokenCookieService refreshTokenCookieService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -64,6 +69,7 @@ public class SessionController {
         this.findSessionByIdService = findSessionByIdService;
         this.registerSessionAndClientService = registerSessionAndClientService;
         this.currentUserPort = currentUserPort;
+        this.refreshTokenCookieService = refreshTokenCookieService;
     }
 
     @GetMapping("/available-slots")
@@ -101,7 +107,18 @@ public class SessionController {
             @RequestBody @Valid SessionAndClientInsertDto dto,
             HttpServletResponse response
     ){
-        LoginResponseDto loginResponse = registerSessionAndClientService.registerSessionAndClient(dto,response);
+        LoginTokensGeneratedDto loginTokens = registerSessionAndClientService.registerSessionAndClient(dto);
+
+        Cookie refreshTokenCookie = refreshTokenCookieService.
+                generateCookie(loginTokens.getRefreshToken().getToken(),"/api/auth/refresh");
+
+        response.addCookie(refreshTokenCookie);
+
+        LoginResponseDto loginResponse = new LoginResponseDto(
+                loginTokens.getUserName(),
+                loginTokens.getAccessToken(),
+                loginTokens.getAccessTokenExpiresIn());
+
         return ResponseEntity.ok().body(loginResponse);
     }
 

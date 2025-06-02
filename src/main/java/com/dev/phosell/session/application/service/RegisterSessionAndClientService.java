@@ -1,14 +1,10 @@
 package com.dev.phosell.session.application.service;
 
-import com.dev.phosell.authentication.application.dto.LoginResponseDto;
-import com.dev.phosell.authentication.application.dto.LoginUserDto;
-import com.dev.phosell.authentication.application.dto.RegisterClientDto;
-import com.dev.phosell.authentication.application.dto.RegisterClientResponseDto;
+import com.dev.phosell.authentication.application.dto.*;
 import com.dev.phosell.authentication.application.service.LoginService;
 import com.dev.phosell.authentication.application.service.RegisterClientService;
 import com.dev.phosell.session.application.dto.SessionAndClientInsertDto;
 import com.dev.phosell.session.application.dto.SessionInsertDto;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +26,7 @@ public class RegisterSessionAndClientService {
         this.loginService = loginService;
     }
 
-    public LoginResponseDto registerSessionAndClient(SessionAndClientInsertDto sessionAndClientInsertDto, HttpServletResponse response){
+    public LoginTokensGeneratedDto registerSessionAndClient(SessionAndClientInsertDto sessionAndClientInsertDto){
 
         RegisterClientDto registerClientDto = sessionAndClientInsertDto.getRegisterClientDto();
 
@@ -44,8 +40,8 @@ public class RegisterSessionAndClientService {
 
         LoginUserDto loginUserDto = new LoginUserDto(registerClientDto.getEmail(),registerClientDto.getPassword());
 
-        LoginResponseDto loginResponse = loginService.login(loginUserDto,response);
+        LoginTokensGeneratedDto loginTokens = loginService.login(loginUserDto);
 
-        return loginResponse;
+        return loginTokens;
     }
 }
