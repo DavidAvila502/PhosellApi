@@ -1,5 +1,6 @@
 package com.dev.phosell.session.domain.validator;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -12,18 +13,28 @@ public class SlotGenerationValidator {
     private final int latestStartWorkingHour;
     private final int advanceHours;
     private final int duration;;
+    private final Clock clock;
 
-    public SlotGenerationValidator(int earliestBookingHour, int latestBookingHour, int latestStartWorkingHour, int earliestStartWorkingHour, int advanceHours, int duration) {
+    public SlotGenerationValidator(
+            int earliestBookingHour,
+            int latestBookingHour,
+            int earliestStartWorkingHour,
+            int latestStartWorkingHour,
+            int advanceHours,
+            int duration,
+            Clock clock
+    ) {
         this.earliestBookingHour = earliestBookingHour;
         this.latestBookingHour = latestBookingHour;
-        this.latestStartWorkingHour = latestStartWorkingHour;
         this.earliestStartWorkingHour = earliestStartWorkingHour;
+        this.latestStartWorkingHour = latestStartWorkingHour;
         this.advanceHours = advanceHours;
         this.duration = duration;
+        this.clock = clock;
     }
 
     public Boolean validateSlotForToday(LocalDateTime slot){
-        LocalDateTime now   = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime now   = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES);
         LocalDate today   = now.toLocalDate();
 
 
@@ -33,7 +44,7 @@ public class SlotGenerationValidator {
 
         LocalDateTime earliestBooking = today.atTime(earliestBookingHour, 0);
         LocalDateTime latestBooking   = today.atTime(latestBookingHour,   0);
-        if (slot.isBefore(earliestBooking) || slot.isAfter(latestBooking)) {
+        if (now.isBefore(earliestBooking) || now.isAfter(latestBooking)) {
             return  false;
         }
 

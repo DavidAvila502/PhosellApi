@@ -2,6 +2,7 @@ package com.dev.phosell.session.domain.service;
 
 import com.dev.phosell.session.domain.validator.SlotGenerationValidator;
 import com.dev.phosell.session.infrastructure.config.SessionConfig;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,16 +15,22 @@ public class GenerateSessionSlots {
 
     private final SessionConfig sessionConfig;
     private final SlotGenerationValidator slotGenerationValidator;
+    private final Clock clock;
 
-    public GenerateSessionSlots(SessionConfig sessionConfig, SlotGenerationValidator slotGenerationValidator){
+    public GenerateSessionSlots(
+            SessionConfig sessionConfig,
+            SlotGenerationValidator slotGenerationValidator,
+            Clock clock
+    ){
         this.sessionConfig = sessionConfig;
         this.slotGenerationValidator = slotGenerationValidator;
+        this.clock = clock;
     }
 
 
     public List<LocalTime> generateSlots(LocalDate date){
 
-        LocalDateTime now   = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime now   = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES);
         LocalDate today   = now.toLocalDate();
 
         // If the date is before today return an empty list
