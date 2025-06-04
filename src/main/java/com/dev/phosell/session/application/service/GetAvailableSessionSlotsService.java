@@ -5,8 +5,8 @@ import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.session.domain.service.GenerateSessionSlots;
 import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator;
-import com.dev.phosell.user.domain.port.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
+import com.dev.phosell.user.domain.port.UserPersistencePort;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,19 +16,19 @@ import java.util.*;
 public class GetAvailableSessionSlotsService {
     private final SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator;
     private final GenerateSessionSlots generateSessionSlots;
-    private final FindPhotographersByIsInServicePort findPhotographersByIsInServicePort;
     private final SessionPersistencePort sessionPersistencePort;
+    private final UserPersistencePort userPersistencePort;
 
     public GetAvailableSessionSlotsService(
             SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator,
             GenerateSessionSlots generateSessionSlots,
-            FindPhotographersByIsInServicePort findPhotographersByIsInServicePort,
-            SessionPersistencePort sessionPersistencePort
+            SessionPersistencePort sessionPersistencePort,
+            UserPersistencePort userPersistencePort
     ){
         this.sessionSlotsAvailabilityCalculator = sessionSlotsAvailabilityCalculator;
         this.generateSessionSlots = generateSessionSlots;
-        this.findPhotographersByIsInServicePort = findPhotographersByIsInServicePort;
         this.sessionPersistencePort = sessionPersistencePort;
+        this.userPersistencePort = userPersistencePort;
     }
 
     public List<LocalTime> getAvailableSlots(LocalDate date)
@@ -41,7 +41,7 @@ public class GetAvailableSessionSlotsService {
                 SessionStatus.CANCELLED_BY_CLIENT.toString()
         );
 
-        List<User> photographersInService = findPhotographersByIsInServicePort.findPhotographersByIsInService(true);
+        List<User> photographersInService = userPersistencePort.findPhotographersByIsInService(true);
 
         List<Session> busySessions = sessionPersistencePort.findByDateAndStatusNotIn(date, freeStatuses);
 

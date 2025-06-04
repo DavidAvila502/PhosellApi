@@ -1,11 +1,11 @@
 package com.dev.phosell.session.application.validator;
 
-import com.dev.phosell.sessionpackage.domain.port.FindSessionPackageByIdPort;
 import com.dev.phosell.sessionpackage.application.exception.SessionPackageNotFoundExcaption;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
-import com.dev.phosell.user.domain.port.FindUserByIdPort;
+import com.dev.phosell.sessionpackage.domain.port.SessionPackagePersistencePort;
 import com.dev.phosell.user.application.exception.UserNotFoundException;
 import com.dev.phosell.user.domain.model.User;
+import com.dev.phosell.user.domain.port.UserPersistencePort;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -13,27 +13,26 @@ import java.util.UUID;
 @Component
 public class RegisterSessionValidator {
 
-    private final FindUserByIdPort findUserByIdPort;
-    private final FindSessionPackageByIdPort findSessionPackageByIdPort;
+    private final UserPersistencePort userPersistencePort;
+    private final SessionPackagePersistencePort sessionPackagePersistencePort;
 
     public  RegisterSessionValidator(
-            FindUserByIdPort findUserByIdPort,
-            FindSessionPackageByIdPort findSessionPackageByIdPort
+            UserPersistencePort userPersistencePort,
+            SessionPackagePersistencePort sessionPackagePersistencePort
     ){
-
-        this.findUserByIdPort = findUserByIdPort;
-        this.findSessionPackageByIdPort =findSessionPackageByIdPort;
+        this.userPersistencePort = userPersistencePort;
+        this.sessionPackagePersistencePort = sessionPackagePersistencePort;
     }
 
     public User validateClient(UUID id){
-        return  findUserByIdPort.findById(id).orElseThrow(() -> new UserNotFoundException("id",id.toString()));
+        return  userPersistencePort.findById(id).orElseThrow(() -> new UserNotFoundException("id",id.toString()));
     }
 
     public User validatePhotographer(UUID id){
-        return findUserByIdPort.findById(id).orElseThrow(() -> new UserNotFoundException("id",id.toString()));
+        return userPersistencePort.findById(id).orElseThrow(() -> new UserNotFoundException("id",id.toString()));
     }
 
     public SessionPackage validateSessionPackage(UUID id){
-        return findSessionPackageByIdPort.findById(id).orElseThrow(() -> new SessionPackageNotFoundExcaption("id",id.toString()));
+        return sessionPackagePersistencePort.findById(id).orElseThrow(() -> new SessionPackageNotFoundExcaption("id",id.toString()));
     }
 }

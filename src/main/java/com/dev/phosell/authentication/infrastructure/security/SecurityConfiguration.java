@@ -45,7 +45,6 @@ public class SecurityConfiguration {
                         // auth route
                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/login", "/api/v1/auth/register")
                         .permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh","/api/v1/auth/logout")
                         .authenticated()
 
@@ -57,7 +56,8 @@ public class SecurityConfiguration {
                         .requestMatchers( "/api/v1/clients/**").hasRole(Role.CLIENT.toString())
 
                         //photographer route
-                        .requestMatchers( "/api/v1/photographers/**").hasRole(Role.PHOTOGRAPHER.toString())
+                        .requestMatchers( "/api/v1/photographers/me").hasRole(Role.PHOTOGRAPHER.toString())
+                        .requestMatchers("/api/v1/photographers/available").hasRole(Role.ADMIN.toString())
 
                         // session route
                         //.requestMatchers("/api/v1/sessions/**").permitAll()

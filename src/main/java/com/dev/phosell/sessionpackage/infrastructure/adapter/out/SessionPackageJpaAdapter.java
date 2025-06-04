@@ -1,8 +1,7 @@
 package com.dev.phosell.sessionpackage.infrastructure.adapter.out;
 
-import com.dev.phosell.sessionpackage.domain.port.FindSessionPackageByIdPort;
-import com.dev.phosell.sessionpackage.domain.port.SessionPackagePersistencePort;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
+import com.dev.phosell.sessionpackage.domain.port.SessionPackagePersistencePort;
 import com.dev.phosell.sessionpackage.infrastructure.persistence.jpa.entity.SessionPackageEntity;
 import com.dev.phosell.sessionpackage.infrastructure.persistence.jpa.repository.SessionPackageJpaRepository;
 import com.dev.phosell.sessionpackage.infrastructure.persistence.mapper.SessionPackageMapper;
@@ -13,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class SessionPackageJpaAdapter implements SessionPackagePersistencePort, FindSessionPackageByIdPort {
+public class SessionPackageJpaAdapter implements SessionPackagePersistencePort {
 
     private final SessionPackageJpaRepository sessionPackageJpaRepository;
     private final SessionPackageMapper sessionPackageMapper;

@@ -11,8 +11,8 @@ import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator
 import com.dev.phosell.session.application.dto.SessionInsertDto;
 import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
 import com.dev.phosell.sessionpackage.domain.model.SessionPackage;
-import com.dev.phosell.user.domain.port.FindPhotographersByIsInServicePort;
 import com.dev.phosell.user.domain.model.User;
+import com.dev.phosell.user.domain.port.UserPersistencePort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -20,31 +20,29 @@ import java.util.List;
 public class RegisterSessionService {
 
     private final SessionPersistencePort sessionPersistencePort;
-
     private final SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator;
-    private final FindPhotographersByIsInServicePort findPhotographersByIsInServicePort;
     private final SessionDtoMapper sessionDtoMapper;
     private final RegisterSessionValidator registerSessionValidator;
     private final SessionBookingPolicyValidator sessionBookingPolicyValidator;
     private final ChooseRandomPhotographer chooseRandomPhotographer;
+    private final UserPersistencePort userPersistencePort;
 
     public  RegisterSessionService(
             SessionPersistencePort sessionPersistencePort,
             SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator,
-            FindPhotographersByIsInServicePort findPhotographersByIsInServicePort,
             SessionDtoMapper sessionDtoMapper,
             RegisterSessionValidator registerSessionValidator,
             SessionBookingPolicyValidator sessionBookingPolicyValidator,
-            ChooseRandomPhotographer chooseRandomPhotographer
+            ChooseRandomPhotographer chooseRandomPhotographer,
+            UserPersistencePort userPersistencePort
     ){
         this.sessionPersistencePort = sessionPersistencePort;
-
         this.sessionSlotsAvailabilityCalculator = sessionSlotsAvailabilityCalculator;
-        this.findPhotographersByIsInServicePort = findPhotographersByIsInServicePort;
         this.sessionDtoMapper = sessionDtoMapper;
         this.registerSessionValidator = registerSessionValidator;
         this.sessionBookingPolicyValidator = sessionBookingPolicyValidator;
         this.chooseRandomPhotographer = chooseRandomPhotographer;
+        this.userPersistencePort = userPersistencePort;
     }
 
     public SessionResponseDto RegisterSession(SessionInsertDto sessionInsert){
@@ -65,7 +63,7 @@ public class RegisterSessionService {
                 sessionPersistencePort.findByDateAndStatusNotIn(sessionInsert.getSessionDate(), freeStatuses);
 
         List<User> photographersInService =
-                findPhotographersByIsInServicePort.findPhotographersByIsInService(true);
+                userPersistencePort.findPhotographersByIsInService(true);
 
         List<User> freePhotographers =
                 sessionSlotsAvailabilityCalculator.
