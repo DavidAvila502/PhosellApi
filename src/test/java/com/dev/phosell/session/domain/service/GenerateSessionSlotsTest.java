@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 class GenerateSessionSlotsTest {
 
     private SessionConfig sessionConfigMock;
-    private SlotGenerationValidator validatorMock;
+    private SlotGenerationValidator validator;
     private Clock fixedClock;
     private GenerateSessionSlots generator;
 
@@ -26,11 +26,15 @@ class GenerateSessionSlotsTest {
         when(sessionConfigMock.getLatestStartWorkingHour()).thenReturn(20);
         when(sessionConfigMock.getAdvanceHours()).thenReturn(3);
 
+    }
+
+    @Test
+    void get_slots_when_is_today_at_time_14_15() {
         LocalDateTime instant = LocalDateTime.of(2025, Month.JUNE, 2, 14, 15);
         ZoneId zona = ZoneId.systemDefault();
         fixedClock = Clock.fixed( instant.atZone(zona).toInstant(), zona );
 
-        validatorMock = new SlotGenerationValidator(
+        validator = new SlotGenerationValidator(
                 6,
                 17,
                 6,
@@ -40,22 +44,65 @@ class GenerateSessionSlotsTest {
                 fixedClock
         );
 
-        generator = new GenerateSessionSlots(sessionConfigMock, validatorMock, fixedClock);
-    }
-
-    @Test
-    void generateSlotsForToday() {
+        generator = new GenerateSessionSlots(sessionConfigMock, validator, fixedClock);
 
         LocalDate today = LocalDate.of(2025, Month.JUNE, 2);
 
-        List<LocalTime> result = generator.generateSlots(today);
-
-        System.out.println(result);
+        List<LocalTime> result = generator.generateSlots(today); // [18:00:00,19:00:00,20:00:00]
 
         assertThat(result).size().isEqualTo(3);
+    }
+
+    @Test
+    void get_slots_when_is_today_at_time_5_0(){
+
+        LocalDateTime instant = LocalDateTime.of(2025, Month.JUNE, 2, 5, 0);
+        ZoneId zona = ZoneId.systemDefault();
+        fixedClock = Clock.fixed( instant.atZone(zona).toInstant(), zona );
+
+        validator = new SlotGenerationValidator(
+                6,
+                17,
+                6,
+                20,
+                3,
+                60,
+                fixedClock
+        );
+
+        generator = new GenerateSessionSlots(sessionConfigMock, validator, fixedClock);
+
+        LocalDate today = LocalDate.of(2025,Month.JUNE,2);
+
+        List<LocalTime> slots = generator.generateSlots(today);
+
+        assertThat(slots.size()).isEqualTo(0);
+    }
 
 
-//        verifyNoInteractions(validatorMock);
+    @Test
+    void get_slots_for_a_future_date(){
+        LocalDateTime instant = LocalDateTime.of(2025, Month.JUNE, 2, 14, 15);
+        ZoneId zona = ZoneId.systemDefault();
+        fixedClock = Clock.fixed( instant.atZone(zona).toInstant(), zona );
+
+        validator = new SlotGenerationValidator(
+                6,
+                17,
+                6,
+                20,
+                3,
+                60,
+                fixedClock
+        );
+
+        generator = new GenerateSessionSlots(sessionConfigMock, validator, fixedClock);
+
+        LocalDate futureDate =  LocalDate.of(2025,Month.JUNE,5);
+
+        List<LocalTime> result = generator.generateSlots(futureDate);
+
+        assertThat(result).size().isEqualTo(13);
     }
 
 }
