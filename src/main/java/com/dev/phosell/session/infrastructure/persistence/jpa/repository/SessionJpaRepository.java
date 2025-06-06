@@ -20,20 +20,20 @@ public interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID>
     @Query("""
             SELECT s FROM SessionEntity s
             WHERE s.sessionDate = :date
-            AND s.photographer.id = :id
-            AND s.sessionStatus IN (:statuses)
+            AND s.sessionStatus
+            IN (:statuses)
             """)
-    List<SessionEntity> findBySessionDateAndPhotographerIdWithStatuses(
-            @Param("date") LocalDate date ,@Param("id") UUID id,@Param("statuses") List<String> statuses);
+    List<SessionEntity> findByDateAndStatusIn(
+            @Param("date") LocalDate date ,@Param("statuses") List<String> statuses);
 
     @Query("""
             SELECT s FROM SessionEntity s
             WHERE s.sessionDate = :date
             AND s.sessionStatus
-            NOT IN (:busyStatuses)
+            NOT IN (:statuses)
             """)
     List<SessionEntity> findByDateAndStatusNotIn(
-            @Param("date") LocalDate date, @Param("busyStatuses") List<String> statuses);
+            @Param("date") LocalDate date, @Param("statuses") List<String> statuses);
 
     @Modifying
     @Query(value =
