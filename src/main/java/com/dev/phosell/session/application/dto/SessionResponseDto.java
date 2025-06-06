@@ -15,8 +15,8 @@ import java.util.UUID;
 @Data
 public class SessionResponseDto {
     private UUID id;
-    private ClientSessionDto client;
-    private PhotographerSessionDto photographer;
+    private ClientBasicInfoDto client;
+    private PhotographerBasicInfoDto photographer;
     private SessionPackage sessionPackage;
     private LocalDate sessionDate;
     private LocalTime sessionTime;

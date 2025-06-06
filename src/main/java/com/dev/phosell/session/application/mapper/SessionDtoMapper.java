@@ -1,7 +1,7 @@
 package com.dev.phosell.session.application.mapper;
 
-import com.dev.phosell.session.application.dto.ClientSessionDto;
-import com.dev.phosell.session.application.dto.PhotographerSessionDto;
+import com.dev.phosell.session.application.dto.ClientBasicInfoDto;
+import com.dev.phosell.session.application.dto.PhotographerBasicInfoDto;
 import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.user.domain.model.User;
@@ -15,20 +15,20 @@ public class SessionDtoMapper {
         // Get the client
         User client = session.getClient();
 
-        ClientSessionDto clientSessionDto =
-                new ClientSessionDto(client.getId(),client.getFullName(), client.getPhone());
+        ClientBasicInfoDto clientBasicInfoDto =
+                new ClientBasicInfoDto(client.getId(),client.getFullName(), client.getPhone());
 
         // Get the photographer
         User photographer = session.getPhotographer();
 
-        PhotographerSessionDto photographerSessionDto =
-                new PhotographerSessionDto(photographer.getId(), photographer.getFullName(), photographer.getPhone());
+        PhotographerBasicInfoDto photographerBasicInfoDto =
+                new PhotographerBasicInfoDto(photographer.getId(), photographer.getFullName(), photographer.getPhone());
 
         // return
         return new SessionResponseDto(
                 session.getId(),
-                clientSessionDto,
-                photographerSessionDto,
+                clientBasicInfoDto,
+                photographerBasicInfoDto,
                 session.getSessionPackage(),
                 session.getSessionDate(),
                 session.getSessionTime(),

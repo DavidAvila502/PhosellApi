@@ -9,7 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ClientSessionDto {
+public class PhotographerBasicInfoDto {
     private UUID id;
     private String fullName;
     private String phone;

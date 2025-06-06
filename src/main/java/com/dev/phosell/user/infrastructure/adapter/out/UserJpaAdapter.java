@@ -15,9 +15,8 @@ import java.util.UUID;
 
 
 @Repository
-public class UserJpaAdapter implements
-        UserPersistencePort, FindUserByEmailPort,
-        RegisterUserPort, FindPhotographersByIsInServicePort, FindUserByIdPort {
+public class UserJpaAdapter implements UserPersistencePort
+{
 
     private final UserJpaRepository userJpaRepository;
     private final UserMapper userMapper;

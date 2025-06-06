@@ -38,19 +38,26 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        //Doc routes
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
+                        .permitAll()
 
                         // auth route
                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/login", "/api/v1/auth/register")
                         .permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh","/api/v1/auth/logout")
                         .authenticated()
+
+                        //packages route
+                        .requestMatchers(HttpMethod.GET,"/api/v1/packages")
+                        .permitAll()
 
                         //client route
                         .requestMatchers( "/api/v1/clients/**").hasRole(Role.CLIENT.toString())
 
                         //photographer route
-                        .requestMatchers( "/api/v1/photographers/**").hasRole(Role.PHOTOGRAPHER.toString())
+                        .requestMatchers( "/api/v1/photographers/me").hasRole(Role.PHOTOGRAPHER.toString())
+                        .requestMatchers("/api/v1/photographers/available").hasRole(Role.ADMIN.toString())
 
                         // session route
                         //.requestMatchers("/api/v1/sessions/**").permitAll()
@@ -68,6 +75,7 @@ public class SecurityConfiguration {
                         .hasAnyRole(Role.ADMIN.toString(),Role.CLIENT.toString(),Role.PHOTOGRAPHER.toString())
                         .requestMatchers(HttpMethod.GET,"/api/v1/sessions/user/{id}").hasRole(Role.ADMIN.toString())
                         .requestMatchers(HttpMethod.POST,"/api/v1/sessions/registrations").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/sessions/swap-photographers").hasRole(Role.ADMIN.toString())
 
                         // all other routes
                         .anyRequest()

@@ -3,6 +3,7 @@ package com.dev.phosell.session.infrastructure.persistence.jpa.repository;
 import com.dev.phosell.session.infrastructure.persistence.jpa.entity.SessionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
@@ -33,4 +34,26 @@ public interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID>
             """)
     List<SessionEntity> findByDateAndStatusNotIn(
             @Param("date") LocalDate date, @Param("busyStatuses") List<String> statuses);
+
+    @Modifying
+    @Query(value =
+            """
+            UPDATE sessions
+            SET photographer_id =
+            CASE id
+            WHEN :sessionAId THEN :photographerBId
+            WHEN :sessionBId THEN :photographerAId
+            END WHERE id IN (:sessionAId, :sessionBId)
+            """,
+            nativeQuery = true)
+    void swapPhotographers(
+            @Param("sessionAId")
+            UUID sessionAId,
+            @Param("sessionBId")
+            UUID sessionBId,
+            @Param("photographerAId")
+            UUID photographerAId,
+            @Param("photographerBId")
+            UUID photographerBId
+    );
 }
