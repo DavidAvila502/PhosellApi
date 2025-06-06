@@ -1,6 +1,7 @@
 package com.dev.phosell.session.domain.model;
 
 import com.dev.phosell.session.domain.exception.session.SessionStatusNotFound;
+import java.util.List;
 
 public enum SessionStatus {
     REQUESTED,
@@ -17,5 +18,9 @@ public enum SessionStatus {
         } catch (IllegalArgumentException e) {
             throw new SessionStatusNotFound(status);
         }
+    }
+
+    public static List<SessionStatus> fromListString(List<String> statuses){
+        return statuses.stream().map(s -> fromString(s)).toList();
     }
 }

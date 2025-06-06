@@ -5,14 +5,22 @@ import com.dev.phosell.session.domain.service.GenerateSessionSlots;
 import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator;
 import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
 import com.dev.phosell.session.domain.validator.SessionStatusChangeValidator;
+import com.dev.phosell.session.domain.validator.SessionSwapPhotographerValidator;
 import com.dev.phosell.session.domain.validator.SlotGenerationValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Clock;
+
 @Configuration
 @EnableConfigurationProperties(SessionConfig.class)
 public class InfraStructureConfig {
+
+    @Bean
+    public Clock systemClock() {
+        return Clock.systemDefaultZone();
+    }
 
     @Bean
     public SessionSlotsAvailabilityCalculator SessionSlotsAvailabilityCalculator(SessionConfig sessionConfig){
@@ -20,19 +28,24 @@ public class InfraStructureConfig {
     }
 
     @Bean
-    public SlotGenerationValidator slotDomainValidator(SessionConfig sessionConfig){
+    public SlotGenerationValidator slotDomainValidator(SessionConfig sessionConfig, Clock clock){
         return  new SlotGenerationValidator(
                 sessionConfig.getEarliestBookingHour(),
                 sessionConfig.getLatestBookingHour(),
-                sessionConfig.getLatestStartWorkingHour(),
                 sessionConfig.getEarliestStartWorkingHour(),
+                sessionConfig.getLatestStartWorkingHour(),
                 sessionConfig.getAdvanceHours(),
-                sessionConfig.getDuration()
+                sessionConfig.getDuration(),
+                clock
         );
     }
 
-    @Bean public GenerateSessionSlots generateSessionSlots(SessionConfig sessionConfig, SlotGenerationValidator slotGenerationValidator){
-        return new GenerateSessionSlots(sessionConfig , slotGenerationValidator);
+    @Bean public GenerateSessionSlots generateSessionSlots(
+            SessionConfig sessionConfig,
+            SlotGenerationValidator slotGenerationValidator,
+            Clock clock
+    ){
+        return new GenerateSessionSlots(sessionConfig , slotGenerationValidator,clock);
     }
 
     @Bean public SessionBookingPolicyValidator sessionBookingPolicyValidator(SessionConfig sessionConfig){
@@ -52,5 +65,9 @@ public class InfraStructureConfig {
 
     @Bean public SessionStatusChangeValidator sessionStatusChangeValidator(){
         return  new SessionStatusChangeValidator();
+    }
+
+    @Bean public SessionSwapPhotographerValidator sessionSwapPhotographerValidator(){
+        return new SessionSwapPhotographerValidator();
     }
 }

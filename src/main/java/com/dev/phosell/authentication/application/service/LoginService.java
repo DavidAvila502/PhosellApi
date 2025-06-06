@@ -1,15 +1,12 @@
 package com.dev.phosell.authentication.application.service;
 
+import com.dev.phosell.authentication.application.dto.LoginTokensGeneratedDto;
 import com.dev.phosell.authentication.infrastructure.security.CustomUserDetails;
 import com.dev.phosell.authentication.domain.model.RefreshToken;
-import com.dev.phosell.authentication.application.dto.LoginResponseDto;
 import com.dev.phosell.authentication.application.dto.LoginUserDto;
 import com.dev.phosell.authentication.infrastructure.security.AuthenticationService;
 import com.dev.phosell.authentication.infrastructure.security.JwtService;
-import com.dev.phosell.authentication.infrastructure.security.RefreshTokenCookieService;
 import com.dev.phosell.authentication.infrastructure.service.SaveRefreshTokenInDbService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,22 +14,19 @@ public class LoginService {
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
     private final SaveRefreshTokenInDbService saveRefreshTokenInDbService;
-    private final RefreshTokenCookieService refreshTokenCookieService;
 
     public LoginService(
             AuthenticationService authenticationService,
             JwtService jwtService,
-            SaveRefreshTokenInDbService saveRefreshTokenInDbService,
-            RefreshTokenCookieService refreshTokenCookieService
+            SaveRefreshTokenInDbService saveRefreshTokenInDbService
     ){
         this.authenticationService = authenticationService;
         this.jwtService = jwtService;
         this.saveRefreshTokenInDbService = saveRefreshTokenInDbService;
-        this.refreshTokenCookieService = refreshTokenCookieService;
     }
 
 
-    public LoginResponseDto login(LoginUserDto loginUser, HttpServletResponse response){
+    public LoginTokensGeneratedDto login(LoginUserDto loginUser){
 
         CustomUserDetails authenticatedUser = authenticationService.authenticate(loginUser);
 
@@ -43,13 +37,10 @@ public class LoginService {
         RefreshToken refreshTokenObject = saveRefreshTokenInDbService.
                 SaveRefreshToken(refreshTokenString, authenticatedUser.getUser());
 
-        Cookie refreshTokenCookie = refreshTokenCookieService.
-                generateCookie(refreshTokenObject.getToken(),"/api/auth/refresh");
-
-        response.addCookie(refreshTokenCookie);
-
-
-        return new LoginResponseDto(
-                authenticatedUser.getEmail(),accessToken,jwtService.getAccessTokenExpiration());
+        return new LoginTokensGeneratedDto(
+                authenticatedUser.getEmail(),
+                accessToken,
+                jwtService.getAccessTokenExpiration(),
+                refreshTokenObject);
     }
 }
