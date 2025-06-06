@@ -40,6 +40,7 @@ public class SessionController {
     private final RegisterSessionAndClientService registerSessionAndClientService;
     private final CurrentUserPort currentUserPort;
     private final RefreshTokenCookieService refreshTokenCookieService;
+    private final SwapSessionPhotographerService swapSessionPhotographerService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -54,7 +55,8 @@ public class SessionController {
             FindSessionByIdService findSessionByIdService,
             RegisterSessionAndClientService registerSessionAndClientService,
             CurrentUserPort currentUserPort,
-            RefreshTokenCookieService refreshTokenCookieService
+            RefreshTokenCookieService refreshTokenCookieService,
+            SwapSessionPhotographerService swapSessionPhotographerService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -70,6 +72,7 @@ public class SessionController {
         this.registerSessionAndClientService = registerSessionAndClientService;
         this.currentUserPort = currentUserPort;
         this.refreshTokenCookieService = refreshTokenCookieService;
+        this.swapSessionPhotographerService = swapSessionPhotographerService;
     }
 
     @GetMapping("/available-slots")
@@ -201,5 +204,13 @@ public class SessionController {
         Page<SessionResponseDto> sessions = findAllSessionsService.findAll(sessionFilterDto,pageable);
 
         return  ResponseEntity.ok(sessions);
+    }
+
+    @PostMapping("/swap-photographers")
+    public  ResponseEntity<Void> swapPhotographers(
+            @RequestBody @Valid SwapSessionPhotographersDto swapDto
+    ){
+        swapSessionPhotographerService.swapPhotographers(swapDto);
+        return ResponseEntity.ok().build();
     }
 }

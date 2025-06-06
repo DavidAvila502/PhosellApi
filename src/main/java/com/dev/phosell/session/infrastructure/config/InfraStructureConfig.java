@@ -5,6 +5,7 @@ import com.dev.phosell.session.domain.service.GenerateSessionSlots;
 import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator;
 import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
 import com.dev.phosell.session.domain.validator.SessionStatusChangeValidator;
+import com.dev.phosell.session.domain.validator.SessionSwapPhotographerValidator;
 import com.dev.phosell.session.domain.validator.SlotGenerationValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -64,5 +65,9 @@ public class InfraStructureConfig {
 
     @Bean public SessionStatusChangeValidator sessionStatusChangeValidator(){
         return  new SessionStatusChangeValidator();
+    }
+
+    @Bean public SessionSwapPhotographerValidator sessionSwapPhotographerValidator(){
+        return new SessionSwapPhotographerValidator();
     }
 }

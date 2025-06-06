@@ -29,7 +29,8 @@ public class FindAllSessionsService {
         LocalTime time = sessionFilterDto.getTime();
         UUID clientId = sessionFilterDto.getClientId();
         UUID photographerId = sessionFilterDto.getPhotographerId();
-        List<SessionStatus> statuses = SessionStatus.fromListString(sessionFilterDto.getStatuses());
+        List<SessionStatus> statuses = sessionFilterDto.getStatuses()
+                != null ? SessionStatus.fromListString(sessionFilterDto.getStatuses()) : null;
 
         return sessionPersistencePort
                 .findByFilters(date,time,photographerId,clientId,statuses,pageable)

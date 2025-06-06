@@ -103,4 +103,9 @@ public class SessionJpaAdapter implements SessionPersistencePort {
                 .findAll(sessionSpecifications,pageable)
                 .map(s->sessionMapper.toDomain(s));
     }
+
+    @Override
+    public void swapPhotographers(UUID sessionAId, UUID sessionBId, UUID photographerAId, UUID photographerBId) {
+        sessionJpaRepository.swapPhotographers(sessionAId,sessionBId,photographerAId,photographerBId);
+    }
 }
