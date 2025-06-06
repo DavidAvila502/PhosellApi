@@ -18,7 +18,7 @@ public interface SessionPersistencePort {
     List<Session> findByPhotographerId(UUID id);
     List<Session> findBySessionPackageId(UUID id);
     List<Session> findByDateAndStatusNotIn(LocalDate date, List<String> statuses);
-    List<Session> findBySessionDateAndPhotographerIdWithStatuses(LocalDate date , UUID id,List<String> statuses);
+    List<Session> findByDateAndStatusIn(LocalDate date ,List<String> statuses);
     Page<Session> findByFilters(
             LocalDate date, LocalTime time, UUID photographerId, UUID clientId, List<SessionStatus> statuses, Pageable pageable);
     void swapPhotographers(UUID sessionAId, UUID sessionBId, UUID photographerAId, UUID photographerBId);
