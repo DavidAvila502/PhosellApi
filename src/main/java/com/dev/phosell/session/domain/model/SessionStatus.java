@@ -23,4 +23,16 @@ public enum SessionStatus {
     public static List<SessionStatus> fromListString(List<String> statuses){
         return statuses.stream().map(s -> fromString(s)).toList();
     }
+
+    public static List<String> toListString(List<SessionStatus> statuses){
+        return statuses.stream().map(sessionStatus -> sessionStatus.toString()).toList();
+    }
+
+    public static List<SessionStatus> getBusyStatuses(){
+        return List.of(REQUESTED,CONFIRMED,IN_PROGRESS,PHOTOS_PENDING);
+    }
+
+    public static List<SessionStatus> getFreeStatuses(){
+        return List.of(COMPLETED,CANCELLED_BY_CLIENT,CANCELLED_BY_ADMIN);
+    }
 }
