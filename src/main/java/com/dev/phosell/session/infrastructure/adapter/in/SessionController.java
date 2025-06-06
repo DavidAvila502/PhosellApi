@@ -41,6 +41,7 @@ public class SessionController {
     private final CurrentUserPort currentUserPort;
     private final RefreshTokenCookieService refreshTokenCookieService;
     private final SwapSessionPhotographerService swapSessionPhotographerService;
+    private final ReassignPhotographerService reassignPhotographerService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -56,7 +57,8 @@ public class SessionController {
             RegisterSessionAndClientService registerSessionAndClientService,
             CurrentUserPort currentUserPort,
             RefreshTokenCookieService refreshTokenCookieService,
-            SwapSessionPhotographerService swapSessionPhotographerService
+            SwapSessionPhotographerService swapSessionPhotographerService,
+            ReassignPhotographerService reassignPhotographerService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -73,6 +75,7 @@ public class SessionController {
         this.currentUserPort = currentUserPort;
         this.refreshTokenCookieService = refreshTokenCookieService;
         this.swapSessionPhotographerService = swapSessionPhotographerService;
+        this.reassignPhotographerService = reassignPhotographerService;
     }
 
     @GetMapping("/available-slots")
@@ -211,6 +214,16 @@ public class SessionController {
             @RequestBody @Valid SwapSessionPhotographersDto swapDto
     ){
         swapSessionPhotographerService.swapPhotographers(swapDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/reassign-photographer")
+    public ResponseEntity<Void> reassignPhotographer(
+            @PathVariable UUID id,
+            @RequestBody @Valid ReassignPhotographerDto dto
+    )
+    {
+        reassignPhotographerService.reassign(id,dto.getNewPhotographerId());
         return ResponseEntity.ok().build();
     }
 }
