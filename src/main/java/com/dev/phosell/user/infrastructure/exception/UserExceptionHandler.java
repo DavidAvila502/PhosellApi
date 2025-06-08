@@ -3,6 +3,7 @@ package com.dev.phosell.user.infrastructure.exception;
 import com.dev.phosell.user.application.exception.UserExistsException;
 import com.dev.phosell.user.application.exception.UserNotFoundException;
 import com.dev.phosell.user.infrastructure.adapter.in.ClientController;
+import com.dev.phosell.user.infrastructure.adapter.in.PhotographerController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
-@RestControllerAdvice(basePackageClasses = ClientController.class)
+@RestControllerAdvice(basePackageClasses = {ClientController.class, PhotographerController.class})
 public class UserExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)

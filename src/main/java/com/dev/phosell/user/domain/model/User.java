@@ -61,8 +61,8 @@ public class User {
         validatePhone();
         validateAddress();
         validateCurp();
-        validateIdPhotoFront();
-        validateIdPhotoBack();
+//        validateIdPhotoFront();
+//        validateIdPhotoBack();
         validateIsInService();
         validateRole();
 
