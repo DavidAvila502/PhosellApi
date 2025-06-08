@@ -27,7 +27,8 @@ public class UserDtoMapper {
                 user.getEmail(),
                 user.getPhone(),
                 user.getAddress(),
-                user.getCurp()
+                user.getCurp(),
+                user.getInService()
         );
     }
 
