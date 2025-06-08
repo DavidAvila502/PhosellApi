@@ -13,4 +13,5 @@ public class PhotographerResponseDto {
     private String phone;
     private String address;
     private String curp;
+    private boolean isInService;
 }

@@ -58,7 +58,8 @@ public class SecurityConfiguration {
                         //photographer route
                         .requestMatchers( HttpMethod.GET,"/api/v1/photographers/me").hasRole(Role.PHOTOGRAPHER.toString())
                         .requestMatchers(HttpMethod.GET,"/api/v1/photographers/available").hasRole(Role.ADMIN.toString())
-                        .requestMatchers(HttpMethod.POST,"/api/v1/photographer").hasRole(Role.ADMIN.toString())
+                        .requestMatchers(HttpMethod.POST,"/api/v1/photographers").hasRole(Role.ADMIN.toString())
+                        .requestMatchers(HttpMethod.PATCH,"/api/v1/photographers/{id}/in-service").hasAnyRole(Role.ADMIN.toString(),Role.PHOTOGRAPHER.toString())
 
                         // session route
                         //.requestMatchers("/api/v1/sessions/**").permitAll()
