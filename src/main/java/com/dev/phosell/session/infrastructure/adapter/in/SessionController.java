@@ -6,6 +6,7 @@ import com.dev.phosell.authentication.domain.port.CurrentUserPort;
 import com.dev.phosell.authentication.infrastructure.security.RefreshTokenCookieService;
 import com.dev.phosell.session.application.dto.*;
 import com.dev.phosell.session.application.service.*;
+import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import com.dev.phosell.user.domain.model.User;
 import jakarta.servlet.http.Cookie;
@@ -153,14 +154,14 @@ public class SessionController {
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<Void> uploadPhotosLink(
+    public ResponseEntity<SessionResponseDto> uploadPhotosLink(
             @PathVariable UUID id,
             @RequestBody @Valid CompleteSessionDto completeSessionDto
     )
     {
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
-        completeSessionService.complete(id,completeSessionDto,authenticatedUser);
-        return ResponseEntity.noContent().build();
+        SessionResponseDto responseDto =completeSessionService.complete(id,completeSessionDto,authenticatedUser);
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/photographer/me")
