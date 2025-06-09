@@ -141,15 +141,15 @@ public class SessionController {
     }
 
     @PatchMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelSession(
+    public ResponseEntity<SessionResponseDto> cancelSession(
             @PathVariable UUID id,
             @RequestBody SessionCancelDto sessionCancelDto
     ){
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
 
-        cancelSessionService.cancel(id,sessionCancelDto,authenticatedUser);
+        SessionResponseDto responseDto= cancelSessionService.cancel(id,sessionCancelDto,authenticatedUser);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(responseDto);
     }
 
     @PatchMapping("/{id}/complete")
