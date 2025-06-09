@@ -1,6 +1,8 @@
 package com.dev.phosell.session.application.service;
 
+import com.dev.phosell.session.application.dto.SessionResponseDto;
 import com.dev.phosell.session.application.dto.SessionStatusChangeDto;
+import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
@@ -18,19 +20,22 @@ public class ChangeSessionStatusService {
     private final SessionStatusChangeValidator sessionStatusChangeValidator;
     private final SessionPersistencePort sessionPersistencePort;
     private final SessionAuthenticityValidator sessionAuthenticityValidator;
+    private final SessionDtoMapper sessionDtoMapper;
 
     public ChangeSessionStatusService(
             SessionStatusChangeValidator sessionStatusChangeValidator,
             SessionPersistencePort sessionPersistencePort,
-            SessionAuthenticityValidator sessionAuthenticityValidator
+            SessionAuthenticityValidator sessionAuthenticityValidator,
+            SessionDtoMapper sessionDtoMapper
     )
     {
         this.sessionStatusChangeValidator = sessionStatusChangeValidator;
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionAuthenticityValidator = sessionAuthenticityValidator;
+        this.sessionDtoMapper = sessionDtoMapper;
     }
 
-    public void ChangeStatus(UUID id,SessionStatusChangeDto sessionStatusDto,User authenticatedUser){
+    public SessionResponseDto ChangeStatus(UUID id, SessionStatusChangeDto sessionStatusDto, User authenticatedUser){
 
         Session session = sessionPersistencePort.findById(id)
                 .orElseThrow(() -> new SessionNotFoundException("id", id.toString()));
@@ -52,6 +57,8 @@ public class ChangeSessionStatusService {
 
         session.setSessionStatus(newStatusEnum);
 
-        sessionPersistencePort.save(session);
+        Session sessionUpdated = sessionPersistencePort.save(session);
+
+        return sessionDtoMapper.toSessionResponseDto(sessionUpdated);
     }
 }

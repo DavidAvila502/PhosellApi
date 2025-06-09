@@ -128,16 +128,16 @@ public class SessionController {
         return ResponseEntity.ok().body(loginResponse);
     }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Void> changeSessionStatus(
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<SessionResponseDto> changeSessionStatus(
             @PathVariable UUID id,
            @Valid @RequestBody SessionStatusChangeDto statusChange)
     {
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
 
-        changeSessionStatusService.ChangeStatus(id, statusChange,authenticatedUser);
+      SessionResponseDto responseDto =  changeSessionStatusService.ChangeStatus(id, statusChange,authenticatedUser);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @PatchMapping("/{id}/cancel")
