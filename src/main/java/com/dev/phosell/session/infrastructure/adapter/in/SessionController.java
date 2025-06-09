@@ -6,7 +6,6 @@ import com.dev.phosell.authentication.domain.port.CurrentUserPort;
 import com.dev.phosell.authentication.infrastructure.security.RefreshTokenCookieService;
 import com.dev.phosell.session.application.dto.*;
 import com.dev.phosell.session.application.service.*;
-import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.infrastructure.persistence.mapper.SessionMapper;
 import com.dev.phosell.user.domain.model.User;
 import jakarta.servlet.http.Cookie;
@@ -219,12 +218,12 @@ public class SessionController {
     }
 
     @PatchMapping("/{id}/reassign-photographer")
-    public ResponseEntity<Void> reassignPhotographer(
+    public ResponseEntity<SessionResponseDto> reassignPhotographer(
             @PathVariable UUID id,
             @RequestBody @Valid ReassignPhotographerDto dto
     )
     {
-        reassignPhotographerService.reassign(id,dto.getNewPhotographerId());
-        return ResponseEntity.ok().build();
+     SessionResponseDto responseDto = reassignPhotographerService.reassign(id,dto.getNewPhotographerId());
+     return ResponseEntity.ok(responseDto);
     }
 }
