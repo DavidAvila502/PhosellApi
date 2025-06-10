@@ -1,6 +1,7 @@
 package com.dev.phosell.session.infrastructure.persistence.jpa.repository;
 
 import com.dev.phosell.session.infrastructure.persistence.jpa.entity.SessionEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -36,6 +37,7 @@ public interface SessionJpaRepository extends JpaRepository<SessionEntity, UUID>
             @Param("date") LocalDate date, @Param("statuses") List<String> statuses);
 
     @Modifying
+    @Transactional
     @Query(value =
             """
             UPDATE sessions

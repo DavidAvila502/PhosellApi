@@ -210,11 +210,11 @@ public class SessionController {
     }
 
     @PostMapping("/swap-photographers")
-    public  ResponseEntity<Void> swapPhotographers(
+    public  ResponseEntity<List<SessionResponseDto>> swapPhotographers(
             @RequestBody @Valid SwapSessionPhotographersDto swapDto
     ){
-        swapSessionPhotographerService.swapPhotographers(swapDto);
-        return ResponseEntity.ok().build();
+        List<SessionResponseDto> responseDtos = swapSessionPhotographerService.swapPhotographers(swapDto);
+        return ResponseEntity.ok().body(responseDtos);
     }
 
     @PatchMapping("/{id}/reassign-photographer")
