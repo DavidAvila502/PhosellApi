@@ -1,18 +1,20 @@
 package com.dev.phosell.authentication.application.dto;
 
+import com.dev.phosell.user.domain.model.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoginResponseDto {
-    private String userName;
+    private UUID id;
+    private String fullName;
+    private String email;
+    private Role role;
     private String jwtToken;
     private Long expiresIn;
-
-    public  LoginResponseDto(){}
-
-    public LoginResponseDto(String userName, String jwtToken, Long expiresIn) {
-        this.userName = userName;
-        this.jwtToken = jwtToken;
-        this.expiresIn = expiresIn;
-    }
 }
