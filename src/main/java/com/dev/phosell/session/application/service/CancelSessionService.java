@@ -1,6 +1,8 @@
 package com.dev.phosell.session.application.service;
 
 import com.dev.phosell.session.application.dto.SessionCancelDto;
+import com.dev.phosell.session.application.dto.SessionResponseDto;
+import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
@@ -18,19 +20,22 @@ public class CancelSessionService {
     private final SessionPersistencePort sessionPersistencePort;
     private final SessionStatusChangeValidator sessionStatusChangeValidator;
     private final SessionAuthenticityValidator sessionAuthenticityValidator;
+    private final SessionDtoMapper sessionDtoMapper;
 
     public CancelSessionService(
             SessionPersistencePort sessionPersistencePort,
             SessionStatusChangeValidator sessionStatusChangeValidator,
-            SessionAuthenticityValidator sessionAuthenticityValidator
+            SessionAuthenticityValidator sessionAuthenticityValidator,
+            SessionDtoMapper sessionDtoMapper
     )
     {
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionStatusChangeValidator = sessionStatusChangeValidator;
         this.sessionAuthenticityValidator = sessionAuthenticityValidator;
+        this.sessionDtoMapper = sessionDtoMapper;
     }
 
-    public void cancel(UUID id, SessionCancelDto sessionCancelDto,User authenticatedUser)
+    public SessionResponseDto cancel(UUID id, SessionCancelDto sessionCancelDto, User authenticatedUser)
     {
         Session session = sessionPersistencePort.findById(id)
                 .orElseThrow(() -> new SessionNotFoundException("id",id.toString()));
@@ -50,8 +55,8 @@ public class CancelSessionService {
 
         session.cancel(authenticatedUser,sessionCancelDto.getCancelReason());
 
-        sessionPersistencePort.save(session);
+       Session cancelledSession = sessionPersistencePort.save(session);
 
-
+        return sessionDtoMapper.toSessionResponseDto(cancelledSession);
     }
 }

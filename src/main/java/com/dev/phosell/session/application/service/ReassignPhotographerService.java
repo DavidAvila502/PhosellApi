@@ -1,5 +1,7 @@
 package com.dev.phosell.session.application.service;
 
+import com.dev.phosell.session.application.dto.SessionResponseDto;
+import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.domain.exception.photographer.NotAvailablePhotographerException;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
@@ -19,18 +21,21 @@ public class ReassignPhotographerService {
     private  final SessionPersistencePort sessionPersistencePort;
     private final SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator;
     private final UserPersistencePort userPersistencePort;
+    private final SessionDtoMapper sessionDtoMapper;
 
     public ReassignPhotographerService(
             SessionPersistencePort sessionPersistencePort,
             SessionSlotsAvailabilityCalculator sessionSlotsAvailabilityCalculator,
-            UserPersistencePort userPersistencePort
+            UserPersistencePort userPersistencePort,
+            SessionDtoMapper sessionMapper
     ){
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionSlotsAvailabilityCalculator = sessionSlotsAvailabilityCalculator;
         this.userPersistencePort = userPersistencePort;
+        this.sessionDtoMapper = sessionMapper;
     }
 
-    public void reassign(UUID sessionId, UUID photographerId)
+    public SessionResponseDto reassign(UUID sessionId, UUID photographerId)
     {
         Session session = sessionPersistencePort.findById(sessionId)
                 .orElseThrow(() -> new SessionNotFoundException("id",sessionId.toString()));
@@ -62,6 +67,8 @@ public class ReassignPhotographerService {
 
         session.setPhotographer(newPhotographer);
 
-        sessionPersistencePort.save(session);
+        Session savedSession = sessionPersistencePort.save(session);
+
+        return sessionDtoMapper.toSessionResponseDto(savedSession);
     }
 }

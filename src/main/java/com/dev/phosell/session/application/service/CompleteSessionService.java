@@ -1,6 +1,8 @@
 package com.dev.phosell.session.application.service;
 
 import com.dev.phosell.session.application.dto.CompleteSessionDto;
+import com.dev.phosell.session.application.dto.SessionResponseDto;
+import com.dev.phosell.session.application.mapper.SessionDtoMapper;
 import com.dev.phosell.session.domain.model.Session;
 import com.dev.phosell.session.domain.model.SessionStatus;
 import com.dev.phosell.session.domain.port.SessionPersistencePort;
@@ -17,19 +19,22 @@ public class CompleteSessionService {
     private final SessionPersistencePort sessionPersistencePort;
     private final SessionStatusChangeValidator sessionStatusChangeValidator;
     private final SessionAuthenticityValidator sessionAuthenticityValidator;
+    private final SessionDtoMapper sessionDtoMapper;
 
     public CompleteSessionService(
             SessionPersistencePort sessionPersistencePort,
             SessionStatusChangeValidator sessionStatusChangeValidator,
-            SessionAuthenticityValidator sessionAuthenticityValidator
+            SessionAuthenticityValidator sessionAuthenticityValidator,
+            SessionDtoMapper sessionDtoMapper
     )
     {
         this.sessionPersistencePort = sessionPersistencePort;
         this.sessionStatusChangeValidator = sessionStatusChangeValidator;
         this.sessionAuthenticityValidator = sessionAuthenticityValidator;
+        this.sessionDtoMapper = sessionDtoMapper;
     }
 
-    public void complete(UUID id, CompleteSessionDto completeSessionDto,User authenticatedUser)
+    public SessionResponseDto complete(UUID id, CompleteSessionDto completeSessionDto, User authenticatedUser)
     {
         Session session = sessionPersistencePort.findById(id)
                 .orElseThrow(() -> new SessionNotFoundException("id",id.toString()));
@@ -44,7 +49,8 @@ public class CompleteSessionService {
 
         session.complete(authenticatedUser,completeSessionDto.getPhotosLink());
 
-        sessionPersistencePort.save(session);
+        Session completedSession = sessionPersistencePort.save(session);
 
+        return sessionDtoMapper.toSessionResponseDto(completedSession);
     }
 }

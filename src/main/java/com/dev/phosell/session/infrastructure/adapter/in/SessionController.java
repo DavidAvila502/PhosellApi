@@ -141,26 +141,26 @@ public class SessionController {
     }
 
     @PatchMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelSession(
+    public ResponseEntity<SessionResponseDto> cancelSession(
             @PathVariable UUID id,
             @RequestBody SessionCancelDto sessionCancelDto
     ){
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
 
-        cancelSessionService.cancel(id,sessionCancelDto,authenticatedUser);
+        SessionResponseDto responseDto= cancelSessionService.cancel(id,sessionCancelDto,authenticatedUser);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(responseDto);
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<Void> uploadPhotosLink(
+    public ResponseEntity<SessionResponseDto> uploadPhotosLink(
             @PathVariable UUID id,
             @RequestBody @Valid CompleteSessionDto completeSessionDto
     )
     {
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
-        completeSessionService.complete(id,completeSessionDto,authenticatedUser);
-        return ResponseEntity.noContent().build();
+        SessionResponseDto responseDto =completeSessionService.complete(id,completeSessionDto,authenticatedUser);
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/photographer/me")
@@ -210,20 +210,20 @@ public class SessionController {
     }
 
     @PostMapping("/swap-photographers")
-    public  ResponseEntity<Void> swapPhotographers(
+    public  ResponseEntity<List<SessionResponseDto>> swapPhotographers(
             @RequestBody @Valid SwapSessionPhotographersDto swapDto
     ){
-        swapSessionPhotographerService.swapPhotographers(swapDto);
-        return ResponseEntity.ok().build();
+        List<SessionResponseDto> responseDtos = swapSessionPhotographerService.swapPhotographers(swapDto);
+        return ResponseEntity.ok().body(responseDtos);
     }
 
     @PatchMapping("/{id}/reassign-photographer")
-    public ResponseEntity<Void> reassignPhotographer(
+    public ResponseEntity<SessionResponseDto> reassignPhotographer(
             @PathVariable UUID id,
             @RequestBody @Valid ReassignPhotographerDto dto
     )
     {
-        reassignPhotographerService.reassign(id,dto.getNewPhotographerId());
-        return ResponseEntity.ok().build();
+     SessionResponseDto responseDto = reassignPhotographerService.reassign(id,dto.getNewPhotographerId());
+     return ResponseEntity.ok(responseDto);
     }
 }
