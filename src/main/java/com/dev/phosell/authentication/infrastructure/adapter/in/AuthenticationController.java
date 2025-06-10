@@ -48,7 +48,10 @@ public class AuthenticationController {
         response.addCookie(refreshTokenCookie);
 
         LoginResponseDto loginResponse = new LoginResponseDto(
-                loginTokens.getUserName(),
+                loginTokens.getUserId(),
+                loginTokens.getFullName(),
+                loginTokens.getEmail(),
+                loginTokens.getRole(),
                 loginTokens.getAccessToken(),
                 loginTokens.getAccessTokenExpiresIn());
 
