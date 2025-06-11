@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.List;
 
 @Configuration
@@ -60,6 +59,9 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/v1/photographers/available").hasRole(Role.ADMIN.toString())
                         .requestMatchers(HttpMethod.POST,"/api/v1/photographers").hasRole(Role.ADMIN.toString())
                         .requestMatchers(HttpMethod.PATCH,"/api/v1/photographers/{id}/in-service").hasAnyRole(Role.ADMIN.toString(),Role.PHOTOGRAPHER.toString())
+
+                        // User route
+                        .requestMatchers(HttpMethod.GET,"/api/v1/users").hasRole(Role.ADMIN.toString())
 
                         // session route
                         //.requestMatchers("/api/v1/sessions/**").permitAll()
