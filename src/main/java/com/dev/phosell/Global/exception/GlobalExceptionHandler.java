@@ -1,5 +1,6 @@
 package com.dev.phosell.global.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -172,6 +173,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return org.springframework.http.ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(detail);
     }
 
+    // Security: expired token
+    @ExceptionHandler(ExpiredJwtException.class)
+    protected ResponseEntity<ProblemDetail> handleExpiredJwt(
+            ExpiredJwtException ex,
+            WebRequest request) {
+
+        log.warn("JWT expired: {}", ex.getMessage());
+        ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        detail.setTitle("Expired Token");
+        detail.setDetail("Your access token has expired");
+        detail.setProperty("timestamp", LocalDateTime.now());
+        detail.setProperty("path", ((ServletWebRequest) request).getRequest().getRequestURI());
+        detail.setProperty("code", "TOKEN_EXPIRED");
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(detail);
+    }
     // Catch-all for other exceptions
     @ExceptionHandler(Exception.class)
     protected org.springframework.http.ResponseEntity<ProblemDetail> handleGenericException(
