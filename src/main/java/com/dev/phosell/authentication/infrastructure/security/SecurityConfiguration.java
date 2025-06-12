@@ -36,7 +36,10 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         //Doc routes
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
                         .permitAll()
@@ -72,7 +75,7 @@ public class SecurityConfiguration {
                         .hasAnyRole(Role.CLIENT.toString(),Role.PHOTOGRAPHER.toString(),Role.ADMIN.toString())
                         .requestMatchers(HttpMethod.PATCH,"/api/v1/sessions/{id}/cancel")
                         .hasAnyRole(Role.ADMIN.toString(),Role.CLIENT.toString())
-                        .requestMatchers(HttpMethod.PATCH,"/api/sessions/{id}/complete")
+                        .requestMatchers(HttpMethod.PATCH,"/api/v1/sessions/{id}/complete")
                         .hasAnyRole(Role.ADMIN.toString(),Role.PHOTOGRAPHER.toString())
                         .requestMatchers(HttpMethod.GET,"/api/v1/sessions/photographer/me").hasRole(Role.PHOTOGRAPHER.toString())
                         .requestMatchers(HttpMethod.GET,"/api/v1/sessions/{id}")
@@ -96,15 +99,15 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowedOrigins(List.of("http://localhost:8005"));
-        configuration.setAllowedMethods(List.of("GET","POST"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
+        configuration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With"));
+        configuration.setExposedHeaders(List.of("Location","Authorization"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**",configuration);
-
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
