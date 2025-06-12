@@ -42,6 +42,7 @@ public class SessionController {
     private final RefreshTokenCookieService refreshTokenCookieService;
     private final SwapSessionPhotographerService swapSessionPhotographerService;
     private final ReassignPhotographerService reassignPhotographerService;
+    private final UpdateSessionBasicInfoService updateSessionBasicInfoService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -58,7 +59,8 @@ public class SessionController {
             CurrentUserPort currentUserPort,
             RefreshTokenCookieService refreshTokenCookieService,
             SwapSessionPhotographerService swapSessionPhotographerService,
-            ReassignPhotographerService reassignPhotographerService
+            ReassignPhotographerService reassignPhotographerService,
+            UpdateSessionBasicInfoService updateSessionBasicInfoService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -76,6 +78,7 @@ public class SessionController {
         this.refreshTokenCookieService = refreshTokenCookieService;
         this.swapSessionPhotographerService = swapSessionPhotographerService;
         this.reassignPhotographerService = reassignPhotographerService;
+        this.updateSessionBasicInfoService = updateSessionBasicInfoService;
     }
 
     @GetMapping("/available-slots")
@@ -228,5 +231,16 @@ public class SessionController {
     {
      SessionResponseDto responseDto = reassignPhotographerService.reassign(id,dto.getNewPhotographerId());
      return ResponseEntity.ok(responseDto);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SessionResponseDto> updateSessionBasicInfo(
+            @PathVariable UUID id,
+            @RequestBody @Valid SessionUpdateBasicInfoDto updateBasicInfoDto
+    ){
+
+        SessionResponseDto responseDto = updateSessionBasicInfoService.updateBasic(updateBasicInfoDto,id);
+
+        return ResponseEntity.ok().body(responseDto);
     }
 }

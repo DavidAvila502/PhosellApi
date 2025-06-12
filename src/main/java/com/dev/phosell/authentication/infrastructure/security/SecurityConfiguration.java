@@ -83,6 +83,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/v1/sessions/user/{id}").hasRole(Role.ADMIN.toString())
                         .requestMatchers(HttpMethod.POST,"/api/v1/sessions/registrations").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/v1/sessions/swap-photographers").hasRole(Role.ADMIN.toString())
+                        .requestMatchers(HttpMethod.PATCH,"/api/v1/sessions/{id}").hasRole(Role.ADMIN.toString())
 
                         // all other routes
                         .anyRequest()
