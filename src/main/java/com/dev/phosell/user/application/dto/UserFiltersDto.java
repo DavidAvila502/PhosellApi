@@ -1,17 +1,19 @@
 package com.dev.phosell.user.application.dto;
 
+import com.dev.phosell.user.domain.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.util.UUID;
 
-@AllArgsConstructor
 @Data
-public class PhotographerResponseDto {
+@AllArgsConstructor
+public class UserFiltersDto {
     private UUID id;
-    private String fullName;
     private String email;
+    private String name;
     private String phone;
-    private String address;
-    private String curp;
-    private boolean isInService;
+    private String city;
+    private Role role;
+    private Boolean isInService;
+
 }

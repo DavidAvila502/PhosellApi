@@ -2,6 +2,7 @@ package com.dev.phosell.session.infrastructure.config;
 
 import com.dev.phosell.session.domain.service.ChooseRandomPhotographer;
 import com.dev.phosell.session.domain.service.GenerateSessionSlots;
+import com.dev.phosell.session.domain.service.GetSwapPhotographerSessions;
 import com.dev.phosell.session.domain.service.SessionSlotsAvailabilityCalculator;
 import com.dev.phosell.session.domain.validator.SessionBookingPolicyValidator;
 import com.dev.phosell.session.domain.validator.SessionStatusChangeValidator;
@@ -69,5 +70,9 @@ public class InfraStructureConfig {
 
     @Bean public SessionSwapPhotographerValidator sessionSwapPhotographerValidator(){
         return new SessionSwapPhotographerValidator();
+    }
+
+    @Bean public GetSwapPhotographerSessions getSwapPhotographerSessions(){
+        return new GetSwapPhotographerSessions();
     }
 }

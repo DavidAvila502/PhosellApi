@@ -41,6 +41,7 @@ public class SessionController {
     private final CurrentUserPort currentUserPort;
     private final RefreshTokenCookieService refreshTokenCookieService;
     private final SwapSessionPhotographerService swapSessionPhotographerService;
+    private final ReassignPhotographerService reassignPhotographerService;
 
     public SessionController(
             FindAllSessionsService findAllSessionsService,
@@ -56,7 +57,8 @@ public class SessionController {
             RegisterSessionAndClientService registerSessionAndClientService,
             CurrentUserPort currentUserPort,
             RefreshTokenCookieService refreshTokenCookieService,
-            SwapSessionPhotographerService swapSessionPhotographerService
+            SwapSessionPhotographerService swapSessionPhotographerService,
+            ReassignPhotographerService reassignPhotographerService
     )
     {
         this.findAllSessionsService = findAllSessionsService;
@@ -73,6 +75,7 @@ public class SessionController {
         this.currentUserPort = currentUserPort;
         this.refreshTokenCookieService = refreshTokenCookieService;
         this.swapSessionPhotographerService = swapSessionPhotographerService;
+        this.reassignPhotographerService = reassignPhotographerService;
     }
 
     @GetMapping("/available-slots")
@@ -118,46 +121,49 @@ public class SessionController {
         response.addCookie(refreshTokenCookie);
 
         LoginResponseDto loginResponse = new LoginResponseDto(
-                loginTokens.getUserName(),
+                loginTokens.getUserId(),
+                loginTokens.getFullName(),
+                loginTokens.getEmail(),
+                loginTokens.getRole(),
                 loginTokens.getAccessToken(),
                 loginTokens.getAccessTokenExpiresIn());
 
         return ResponseEntity.ok().body(loginResponse);
     }
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Void> changeSessionStatus(
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<SessionResponseDto> changeSessionStatus(
             @PathVariable UUID id,
            @Valid @RequestBody SessionStatusChangeDto statusChange)
     {
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
 
-        changeSessionStatusService.ChangeStatus(id, statusChange,authenticatedUser);
+      SessionResponseDto responseDto =  changeSessionStatusService.ChangeStatus(id, statusChange,authenticatedUser);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @PatchMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancelSession(
+    public ResponseEntity<SessionResponseDto> cancelSession(
             @PathVariable UUID id,
             @RequestBody SessionCancelDto sessionCancelDto
     ){
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
 
-        cancelSessionService.cancel(id,sessionCancelDto,authenticatedUser);
+        SessionResponseDto responseDto= cancelSessionService.cancel(id,sessionCancelDto,authenticatedUser);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(responseDto);
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<Void> uploadPhotosLink(
+    public ResponseEntity<SessionResponseDto> uploadPhotosLink(
             @PathVariable UUID id,
             @RequestBody @Valid CompleteSessionDto completeSessionDto
     )
     {
         User authenticatedUser = currentUserPort.getAuthenticatedUser();
-        completeSessionService.complete(id,completeSessionDto,authenticatedUser);
-        return ResponseEntity.noContent().build();
+        SessionResponseDto responseDto =completeSessionService.complete(id,completeSessionDto,authenticatedUser);
+        return ResponseEntity.ok().body(responseDto);
     }
 
     @GetMapping("/photographer/me")
@@ -207,10 +213,20 @@ public class SessionController {
     }
 
     @PostMapping("/swap-photographers")
-    public  ResponseEntity<Void> swapPhotographers(
+    public  ResponseEntity<List<SessionResponseDto>> swapPhotographers(
             @RequestBody @Valid SwapSessionPhotographersDto swapDto
     ){
-        swapSessionPhotographerService.swapPhotographers(swapDto);
-        return ResponseEntity.ok().build();
+        List<SessionResponseDto> responseDtos = swapSessionPhotographerService.swapPhotographers(swapDto);
+        return ResponseEntity.ok().body(responseDtos);
+    }
+
+    @PatchMapping("/{id}/reassign-photographer")
+    public ResponseEntity<SessionResponseDto> reassignPhotographer(
+            @PathVariable UUID id,
+            @RequestBody @Valid ReassignPhotographerDto dto
+    )
+    {
+     SessionResponseDto responseDto = reassignPhotographerService.reassign(id,dto.getNewPhotographerId());
+     return ResponseEntity.ok(responseDto);
     }
 }

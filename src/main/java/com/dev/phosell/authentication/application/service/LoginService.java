@@ -38,7 +38,10 @@ public class LoginService {
                 SaveRefreshToken(refreshTokenString, authenticatedUser.getUser());
 
         return new LoginTokensGeneratedDto(
+                authenticatedUser.getUser().getId(),
+                authenticatedUser.getUser().getFullName(),
                 authenticatedUser.getEmail(),
+                authenticatedUser.getRole(),
                 accessToken,
                 jwtService.getAccessTokenExpiration(),
                 refreshTokenObject);

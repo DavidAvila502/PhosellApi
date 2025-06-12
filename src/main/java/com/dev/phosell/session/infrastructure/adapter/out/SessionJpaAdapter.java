@@ -77,8 +77,8 @@ public class SessionJpaAdapter implements SessionPersistencePort {
     }
 
     @Override
-    public List<Session> findBySessionDateAndPhotographerIdWithStatuses(LocalDate date, UUID id, List<String> statuses) {
-        return sessionJpaRepository.findBySessionDateAndPhotographerIdWithStatuses(date,id, statuses).stream()
+    public List<Session> findByDateAndStatusIn(LocalDate date, List<String> statuses) {
+        return sessionJpaRepository.findByDateAndStatusIn(date, statuses).stream()
                 .map(s -> sessionMapper.toDomain(s)).toList();
     }
 
