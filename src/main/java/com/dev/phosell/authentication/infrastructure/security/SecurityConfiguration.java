@@ -45,10 +45,9 @@ public class SecurityConfiguration {
                         .permitAll()
 
                         // auth route
-                        .requestMatchers(HttpMethod.POST,"/api/v1/auth/login", "/api/v1/auth/register")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register",
+                                "/api/v1/auth/refresh","/api/v1/auth/logout")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/refresh","/api/v1/auth/logout")
-                        .authenticated()
 
                         //packages route
                         .requestMatchers(HttpMethod.GET,"/api/v1/packages")
