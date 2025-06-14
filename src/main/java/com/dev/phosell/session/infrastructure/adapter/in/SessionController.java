@@ -119,7 +119,7 @@ public class SessionController {
         LoginTokensGeneratedDto loginTokens = registerSessionAndClientService.registerSessionAndClient(dto);
 
         Cookie refreshTokenCookie = refreshTokenCookieService.
-                generateCookie(loginTokens.getRefreshToken().getToken(),"/api/auth/refresh");
+                generateCookie(loginTokens.getRefreshToken().getToken(),"/");
 
         response.addCookie(refreshTokenCookie);
 
