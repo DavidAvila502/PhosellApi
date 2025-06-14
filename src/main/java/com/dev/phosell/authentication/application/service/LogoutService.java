@@ -53,7 +53,7 @@ public class LogoutService {
         refreshTokenPersistencePort.deleteByToken(foundRefreshToken.getToken());
 
         // Clean refreshToken from Cookies
-        Cookie refreshTokenCookie = refreshTokenCookieService.cleanCookie("/api/auth/refresh");
+        Cookie refreshTokenCookie = refreshTokenCookieService.cleanCookie("/");
         response.addCookie(refreshTokenCookie);
 
     }

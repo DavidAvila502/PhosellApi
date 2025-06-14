@@ -43,7 +43,7 @@ public class AuthenticationController {
         LoginTokensGeneratedDto loginTokens = loginService.login(loginUser);
 
         Cookie refreshTokenCookie = refreshTokenCookieService.
-                generateCookie(loginTokens.getRefreshToken().getToken(),"/api/auth/refresh");
+                generateCookie(loginTokens.getRefreshToken().getToken(),"/");
 
         response.addCookie(refreshTokenCookie);
 
